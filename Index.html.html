@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComplianceDaddy | Hospitality Compliance Automated</title>
+<meta name="description" content="Pre-launch waitlist for AI-powered venue audits. ComplianceDaddy automates hospitality compliance: audits, checklists, reports in one platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --graphite: #1a1a1a;
+    --steel-dark: #2a2a2a;
+    --steel-mid: #3a3a3a;
+    --steel-light: #4a4a4a;
+    --leather: #2c1f1a;
+    --leather-dark: #1e1510;
+    --amber: #d4a017;
+    --amber-bright: #f0b820;
+    --amber-dim: #a07810;
+    --text-primary: #e8e4de;
+    --text-secondary: #9a9490;
+    --text-dim: #5a5550;
+    --border: rgba(212,160,23,0.15);
+    --steel-gradient: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 50%, #3a3a3a 100%);
+    --leather-texture: repeating-linear-gradient(
+      45deg,
+      rgba(44,31,26,0.8) 0px,
+      rgba(30,21,16,0.8) 2px,
+      rgba(44,31,26,0.8) 4px
+    );
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--graphite);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── CUSTOM CURSOR ─── */
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--amber);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(212,160,23,0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; animation: fadeIn 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: linear-gradient(180deg, rgba(26,26,26,0.98) 0%, rgba(26,26,26,0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    background: linear-gradient(135deg, #d4a017 0%, #f0b820 40%, #8a6010 70%, #d4a017 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: metalSheen 4s ease infinite;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--steel-gradient);
+    border-radius: 6px;
+    border: 1px solid rgba(212,160,23,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  @keyframes metalSheen {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 40px; list-style: none; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--amber);
+    transform: scaleX(0);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .nav-links a:hover { color: var(--amber); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-links .nav-cta {
+    background: linear-gradient(135deg, var(--amber), var(--amber-bright));
+    color: var(--graphite) !important;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-weight: 700;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1) !important;
+    box-shadow: 0 0 20px rgba(212,160,23,0.2);
+  }
+  .nav-links .nav-cta:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(212,160,23,0.4) !important;
+  }
+  .nav-links .nav-cta::after { display: none; }
+
+  /* hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--amber);
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: rgba(26,26,26,0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 48px;
+    z-index: 999;
+    flex-direction: column; gap: 20px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--leather-dark);
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent, transparent 10px,
+      rgba(255,255,255,0.01) 10px, rgba(255,255,255,0.01) 11px
+    );
+    border-top: 1px solid rgba(212,160,23,0.1);
+    padding: 64px 48px 40px;
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px; margin-bottom: 48px;
+  }
+  .footer-brand .logo { font-size: 18px; margin-bottom: 16px; display: inline-flex; }
+  .footer-brand p { color: var(--text-dim); font-size: 14px; line-height: 1.7; max-width: 240px; }
+  .footer-links h4 { color: var(--amber); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; }
+  .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links ul a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: color 0.3s; }
+  .footer-links ul a:hover { color: var(--text-primary); }
+  .footer-contact h4 { color: var(--amber); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; }
+  .footer-contact p { color: var(--text-dim); font-size: 14px; margin-bottom: 8px; }
+  .footer-contact a { color: var(--text-secondary); text-decoration: none; }
+  .social-icons { display: flex; gap: 16px; margin-top: 20px; }
+  .social-icons a {
+    width: 40px; height: 40px;
+    background: var(--steel-gradient);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .social-icons a:hover { border-color: rgba(212,160,23,0.4); color: var(--amber); transform: translateY(-2px); }
+  .footer-bottom {
+    max-width: 1200px; margin: 0 auto;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom p { color: var(--text-dim); font-size: 13px; }
+
+  /* ─── BUTTONS ─── */
+  .btn-amber {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-bright) 100%);
+    color: var(--graphite);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 18px 40px;
+    border: none; border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 30px rgba(212,160,23,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+    text-decoration: none;
+  }
+  .btn-amber:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 60px rgba(212,160,23,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .btn-steel {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--steel-gradient);
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px; font-weight: 600;
+    padding: 14px 32px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    text-decoration: none;
+  }
+  .btn-steel:hover {
+    border-color: rgba(212,160,23,0.4);
+    box-shadow: 0 0 20px rgba(212,160,23,0.15);
+    transform: scale(1.02);
+  }
+
+  /* ─── SECTION WRAPPERS ─── */
+  .section { padding: 120px 48px; max-width: 1200px; margin: 0 auto; }
+  .section-full { padding: 120px 48px; }
+  .section-label {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before { content: ''; width: 40px; height: 1px; background: var(--amber); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 12px;
+    padding: 56px;
+    max-width: 480px; width: 90%;
+    text-align: center;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 80px rgba(212,160,23,0.1);
+    animation: modalIn 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal-icon { font-size: 48px; margin-bottom: 24px; }
+  .modal h3 { font-family: 'Syne', sans-serif; font-size: 28px; margin-bottom: 12px; color: var(--amber); }
+  .modal p { color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none;
+    color: var(--text-dim); font-size: 24px; cursor: pointer;
+  }
+
+  /* ─── FORMS ─── */
+  .form-group { margin-bottom: 20px; text-align: left; }
+  .form-group label {
+    display: block; font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    padding: 14px 18px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .form-group select { cursor: pointer; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: rgba(212,160,23,0.5);
+    background: rgba(212,160,23,0.04);
+    box-shadow: 0 0 20px rgba(212,160,23,0.08);
+  }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+
+  /* ─── LANDING PAGE ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 60%, rgba(212,160,23,0.04) 0%, transparent 70%),
+                linear-gradient(180deg, #1a1a1a 0%, #111111 100%);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(212,160,23,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,160,23,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift {
+    from { transform: translateY(0); }
+    to { transform: translateY(60px); }
+  }
+  .hero-content { text-align: center; position: relative; z-index: 2; max-width: 900px; padding: 0 24px; }
+
+  .hero-logo-mark {
+    width: 80px; height: 80px; margin: 0 auto 40px;
+    background: var(--steel-gradient);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 60px rgba(212,160,23,0.1);
+    animation: unfold 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+    opacity: 0;
+  }
+  @keyframes unfold {
+    0% { opacity: 0; transform: scale(0.5) rotateY(90deg); clip-path: inset(50%); }
+    60% { opacity: 1; transform: scale(1.05) rotateY(0deg); clip-path: inset(0%); }
+    100% { opacity: 1; transform: scale(1) rotateY(0deg); clip-path: inset(0%); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, #d4a017 0%, #f0b820 35%, #c49010 65%, #d4a017 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: metalSheen 5s ease infinite, slideUp 0.8s 0.4s cubic-bezier(0.4,0,0.2,1) both;
+    text-shadow: none;
+  }
+  .hero h1 em {
+    font-style: normal;
+    -webkit-text-fill-color: var(--text-primary);
+    background: none;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 24px);
+    color: var(--text-secondary);
+    max-width: 620px; margin: 0 auto 48px;
+    line-height: 1.6;
+    animation: slideUp 0.8s 0.6s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: slideUp 0.8s 0.8s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scroll-arrow {
+    position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text-dim); font-size: 12px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: bounce 2s ease infinite;
+    cursor: pointer;
+  }
+  @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+  .scroll-arrow svg { opacity: 0.4; }
+
+  /* What Section */
+  .what-section { background: var(--steel-gradient); padding: 120px 48px; }
+  .what-inner { max-width: 1200px; margin: 0 auto; }
+  .what-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    margin-bottom: 64px;
+    letter-spacing: -0.02em;
+  }
+  .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .card {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 40px 32px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .card:hover { transform: translateY(-6px) scale(1.02); border-color: rgba(212,160,23,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(212,160,23,0.05); }
+  .card:hover::before { opacity: 1; }
+  .card-icon { font-size: 40px; margin-bottom: 24px; }
+  .card h3 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--amber); }
+  .card p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; }
+
+  /* Why Section */
+  .why-section {
+    padding: 120px 48px;
+    background: var(--leather);
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent, transparent 12px,
+      rgba(0,0,0,0.15) 12px, rgba(0,0,0,0.15) 13px
+    ), repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 12px,
+      rgba(0,0,0,0.05) 12px, rgba(0,0,0,0.05) 13px
+    );
+  }
+  .why-inner { max-width: 1200px; margin: 0 auto; }
+  .why-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    margin-bottom: 64px;
+    letter-spacing: -0.02em;
+  }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .pain-item {
+    display: flex; gap: 16px; margin-bottom: 24px;
+    padding: 20px; border-radius: 6px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .pain-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .pain-item h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #c0b0a0; }
+  .pain-item p { color: var(--text-dim); font-size: 14px; line-height: 1.6; }
+  .solution-item {
+    display: flex; gap: 16px; margin-bottom: 24px;
+    padding: 20px; border-radius: 6px;
+    background: rgba(212,160,23,0.05);
+    border: 1px solid rgba(212,160,23,0.12);
+  }
+  .solution-item h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--amber); }
+  .solution-item p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+  .col-label {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 24px; display: block;
+  }
+  .col-label.red { color: #c04040; }
+  .col-label.green { color: var(--amber); }
+
+  /* How Section */
+  .how-section { padding: 120px 48px; background: var(--graphite); position: relative; }
+  .how-inner { max-width: 1200px; margin: 0 auto; }
+  .how-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    margin-bottom: 80px;
+    letter-spacing: -0.02em;
+  }
+  .stepper {
+    display: flex; align-items: flex-start; gap: 0;
+    position: relative;
+  }
+  .step {
+    flex: 1; text-align: center; position: relative; padding: 0 24px;
+  }
+  .step-connector {
+    position: absolute; top: 40px;
+    left: 50%; right: -50%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber), rgba(212,160,23,0.2));
+    z-index: 0;
+  }
+  .step:last-child .step-connector { display: none; }
+  .step-num {
+    width: 80px; height: 80px; margin: 0 auto 24px;
+    background: var(--steel-gradient);
+    border: 2px solid rgba(212,160,23,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;
+    color: var(--amber);
+    position: relative; z-index: 1;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 30px rgba(212,160,23,0.1);
+  }
+  .step:hover .step-num { border-color: var(--amber); box-shadow: 0 0 40px rgba(212,160,23,0.3); transform: scale(1.1); }
+  .step-icon { font-size: 28px; }
+  .step h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+  .step p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+
+  /* CTA Bottom */
+  .cta-bottom {
+    padding: 120px 48px;
+    background: linear-gradient(180deg, var(--graphite) 0%, var(--leather-dark) 100%);
+    text-align: center;
+  }
+  .cta-bottom h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+  .cta-bottom p { color: var(--text-secondary); font-size: 18px; margin-bottom: 48px; }
+
+  /* Waitlist Form */
+  .waitlist-modal-inner {
+    background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%);
+    border: 1px solid rgba(212,160,23,0.2);
+    border-radius: 12px;
+    padding: 48px;
+    max-width: 520px; width: 90%;
+    position: relative;
+  }
+  .waitlist-modal-inner h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; margin-bottom: 8px; color: var(--text-primary);
+  }
+  .waitlist-modal-inner p { color: var(--text-secondary); margin-bottom: 32px; font-size: 15px; }
+
+  /* ─── ABOUT PAGE ─── */
+  .about-hero {
+    min-height: 80vh;
+    display: flex; align-items: center;
+    background: var(--leather);
+    background-image: repeating-linear-gradient(
+      45deg, transparent, transparent 12px,
+      rgba(0,0,0,0.12) 12px, rgba(0,0,0,0.12) 13px
+    );
+    position: relative; overflow: hidden;
+    padding: 140px 48px 80px;
+  }
+  .about-hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .founder-img {
+    aspect-ratio: 3/4;
+    background: var(--steel-gradient);
+    border-radius: 8px;
+    border: 1px solid rgba(212,160,23,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 120px;
+    color: rgba(255,255,255,0.05);
+    position: relative; overflow: hidden;
+    box-shadow: 40px 40px 80px rgba(0,0,0,0.5);
+  }
+  .founder-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(212,160,23,0.05) 100%);
+  }
+  .about-hero-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .about-hero-text h1 span { color: var(--amber); }
+  .about-hero-text p { color: var(--text-secondary); font-size: 18px; line-height: 1.7; margin-bottom: 32px; }
+
+  /* Timeline */
+  .timeline-section { padding: 120px 48px; background: var(--steel-dark); }
+  .timeline-inner { max-width: 1200px; margin: 0 auto; }
+  .timeline-section h2 {
+    font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800;
+    margin-bottom: 80px; letter-spacing: -0.02em;
+  }
+  .timeline {
+    position: relative;
+    display: flex; gap: 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; top: 20px; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--amber) 0%, rgba(212,160,23,0.3) 100%);
+  }
+  .milestone {
+    flex: 1; padding-top: 60px; position: relative; padding-right: 24px;
+  }
+  .milestone-dot {
+    width: 40px; height: 40px;
+    background: var(--graphite);
+    border: 2px solid var(--amber);
+    border-radius: 50%;
+    position: absolute; top: 0; left: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 20px rgba(212,160,23,0.2);
+  }
+  .milestone-dot::after {
+    content: '';
+    width: 12px; height: 12px;
+    background: var(--amber);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+  .milestone:hover .milestone-dot { box-shadow: 0 0 40px rgba(212,160,23,0.4); transform: scale(1.2); }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.8); } }
+  .milestone-year { color: var(--amber); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+  .milestone h4 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .milestone p { color: var(--text-dim); font-size: 14px; line-height: 1.6; }
+
+  /* Mission block */
+  .mission-section { padding: 120px 48px; background: var(--graphite); text-align: center; }
+  .mission-quote {
+    max-width: 700px; margin: 0 auto;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    position: relative; padding: 48px;
+    border: 1px solid rgba(212,160,23,0.15);
+    border-radius: 4px;
+  }
+  .mission-quote::before {
+    content: '"';
+    font-size: 120px; line-height: 1;
+    color: rgba(212,160,23,0.1);
+    position: absolute; top: -20px; left: 20px;
+    font-family: Georgia, serif;
+  }
+  .mission-quote em { color: var(--amber); font-style: normal; }
+
+  /* ─── PITCH DECK PAGE ─── */
+  .pitch-gate {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding-top: 72px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.04) 0%, transparent 70%);
+  }
+  .pitch-gate-box {
+    background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%);
+    border: 1px solid rgba(212,160,23,0.2);
+    border-radius: 12px;
+    padding: 64px;
+    max-width: 480px; width: 90%;
+    text-align: center;
+  }
+  .pitch-gate-box .lock-icon { font-size: 56px; margin-bottom: 24px; }
+  .pitch-gate-box h2 { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+  .pitch-gate-box p { color: var(--text-secondary); margin-bottom: 32px; font-size: 15px; line-height: 1.6; }
+  .access-hint {
+    background: rgba(212,160,23,0.05);
+    border: 1px solid rgba(212,160,23,0.1);
+    border-radius: 4px; padding: 16px;
+    font-size: 13px; color: var(--text-dim); margin-top: 20px;
+  }
+
+  .pitch-content { display: none; padding-top: 72px; }
+  .pitch-content.visible { display: block; }
+  .pitch-header {
+    background: var(--steel-gradient);
+    border-bottom: 1px solid rgba(212,160,23,0.15);
+    padding: 48px;
+    text-align: center;
+  }
+  .pitch-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--amber), var(--amber-bright));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .slides-carousel { padding: 64px 48px; max-width: 1200px; margin: 0 auto; }
+  .slide {
+    background: linear-gradient(135deg, #252525 0%, #1e1e1e 100%);
+    border: 2px solid rgba(74,74,74,0.4);
+    border-radius: 8px;
+    min-height: 500px;
+    display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 64px;
+    position: relative;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .slide.active { display: flex; animation: slideIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  .slide-number {
+    position: absolute; top: 24px; right: 24px;
+    font-size: 12px; letter-spacing: 0.2em; color: var(--text-dim);
+  }
+  .slide h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--amber);
+    letter-spacing: -0.02em;
+  }
+  .slide p { color: var(--text-secondary); font-size: 18px; line-height: 1.7; max-width: 640px; }
+  .slide .stat { font-size: 72px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--amber); margin: 16px 0; }
+  .slide .stat-label { font-size: 14px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
+
+  .slide-nav {
+    display: flex; align-items: center; justify-content: center; gap: 24px;
+    padding: 32px 48px;
+  }
+  .slide-btn {
+    width: 48px; height: 48px;
+    background: var(--steel-gradient);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-primary); font-size: 18px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .slide-btn:hover { border-color: rgba(212,160,23,0.4); color: var(--amber); }
+  .slide-dots { display: flex; gap: 8px; }
+  .slide-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--steel-mid); cursor: pointer;
+    transition: all 0.4s;
+  }
+  .slide-dot.active { background: var(--amber); transform: scale(1.2); }
+
+  /* ─── CONTACT PAGE ─── */
+  .contact-hero { min-height: 40vh; display: flex; align-items: center; background: var(--steel-gradient); padding: 140px 48px 80px; }
+  .contact-hero-inner { max-width: 1200px; margin: 0 auto; }
+  .contact-hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(48px, 6vw, 80px); font-weight: 800; letter-spacing: -0.02em; }
+  .contact-hero p { color: var(--text-secondary); font-size: 20px; margin-top: 16px; }
+
+  .contact-section { padding: 80px 48px; max-width: 1200px; margin: 0 auto; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .contact-form-wrapper { }
+  .contact-info h3 { font-family: 'Syne', sans-serif; font-size: 24px; margin-bottom: 32px; }
+  .info-item { display: flex; gap: 16px; margin-bottom: 28px; }
+  .info-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .info-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+  .info-value { color: var(--text-primary); font-size: 16px; }
+  .info-value a { color: var(--amber); text-decoration: none; }
+  .map-placeholder {
+    height: 280px; background: var(--steel-gradient);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; margin-top: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--text-dim);
+    position: relative; overflow: hidden;
+  }
+  .map-pin {
+    position: absolute;
+    font-size: 32px;
+    animation: pinBounce 2s ease infinite;
+  }
+  @keyframes pinBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .map-placeholder .map-label {
+    position: absolute; bottom: 16px;
+    background: rgba(26,26,26,0.8);
+    padding: 8px 16px; border-radius: 4px;
+    font-size: 12px; color: var(--amber);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── PASSWORD MODAL ─── */
+  .pwd-modal {
+    max-width: 440px; width: 90%;
+    background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%);
+    border: 1px solid rgba(212,160,23,0.25);
+    border-radius: 12px; padding: 56px;
+    text-align: center;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+  }
+  .pwd-modal .lock-icon { font-size: 48px; margin-bottom: 24px; }
+  .pwd-modal h3 { font-family: 'Syne', sans-serif; font-size: 28px; margin-bottom: 8px; }
+  .pwd-modal p { color: var(--text-secondary); margin-bottom: 28px; font-size: 15px; }
+  .pwd-error { color: #e05050; font-size: 14px; margin-top: 12px; display: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .about-hero-inner { grid-template-columns: 1fr; }
+    .founder-img { max-height: 300px; aspect-ratio: 16/9; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    .stepper { flex-direction: column; gap: 40px; }
+    .step-connector { display: none; }
+    .timeline { flex-direction: column; }
+    .timeline::before { display: none; }
+    .milestone { padding-top: 0; padding-left: 56px; padding-bottom: 32px; }
+    .milestone-dot { top: 0; }
+    .section { padding: 80px 24px; }
+    .section-full { padding: 80px 24px; }
+    .what-section, .why-section, .how-section, .cta-bottom { padding: 80px 24px; }
+    .timeline-section { padding: 80px 24px; }
+    .mission-section { padding: 80px 24px; }
+    .slides-carousel { padding: 32px 24px; }
+    .slide { padding: 40px 24px; min-height: 400px; }
+    .pitch-header { padding: 48px 24px; }
+    .contact-section { padding: 60px 24px; }
+    .contact-hero { padding: 120px 24px 60px; }
+    .about-hero { padding: 120px 24px 60px; }
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 40px; }
+    .slide .stat { font-size: 48px; }
+    .mobile-menu { padding: 24px; }
+    .waitlist-modal-inner, .modal { padding: 32px 24px; }
+    footer { padding: 48px 24px 32px; }
+  }
+
+  /* Stagger fade-in for page load */
+  .stagger-1 { animation-delay: 0.1s; opacity: 0; animation-fill-mode: both; animation-name: slideUp; animation-duration: 0.7s; animation-timing-function: cubic-bezier(0.4,0,0.2,1); }
+  .stagger-2 { animation-delay: 0.2s; opacity: 0; animation-fill-mode: both; animation-name: slideUp; animation-duration: 0.7s; animation-timing-function: cubic-bezier(0.4,0,0.2,1); }
+  .stagger-3 { animation-delay: 0.3s; opacity: 0; animation-fill-mode: both; animation-name: slideUp; animation-duration: 0.7s; animation-timing-function: cubic-bezier(0.4,0,0.2,1); }
+  .stagger-4 { animation-delay: 0.5s; opacity: 0; animation-fill-mode: both; animation-name: slideUp; animation-duration: 0.7s; animation-timing-function: cubic-bezier(0.4,0,0.2,1); }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ─── NAVBAR ─── -->
+<nav>
+  <div class="logo" onclick="navigate('home')">
+    <div class="logo-icon">⚖</div>
+    ComplianceDaddy
+  </div>
+  <ul class="nav-links" id="desktopNav">
+    <li><a href="#" onclick="navigate('home');return false;">Home</a></li>
+    <li><a href="#" onclick="navigate('about');return false;">About</a></li>
+    <li><a href="#" onclick="navigate('contact');return false;">Contact</a></li>
+    <li><a href="#" class="nav-cta" onclick="openWaitlist();return false;">Join Waitlist</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="navigate('home');closeMobile();return false;">Home</a>
+  <a href="#" onclick="navigate('about');closeMobile();return false;">About</a>
+  <a href="#" onclick="navigate('contact');closeMobile();return false;">Contact</a>
+  <a href="#" onclick="openWaitlist();closeMobile();return false;" style="color:var(--amber);">Join Waitlist →</a>
+</div>
+
+<!-- ─── PAGE: HOME ─── -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-logo-mark">⚖</div>
+      <h1>The smarter way to keep your venue compliant—<em>without the clipboard.</em></h1>
+      <p class="hero-sub">Hospitality ops automated: audits, checklists, reports in one platform. Pre-launch. Spots are limited.</p>
+      <div class="hero-actions">
+        <button class="btn-amber" onclick="openWaitlist()">
+          Join Waitlist <span>→</span>
+        </button>
+        <a href="#" class="btn-steel" onclick="navigate('about');return false;">Learn More</a>
+      </div>
+    </div>
+    <div class="scroll-arrow" onclick="document.querySelector('.what-section').scrollIntoView({behavior:'smooth'})">
+      <span>Scroll</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10l6 6 6-6" stroke="#d4a017" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+  </section>
+
+  <!-- What Section -->
+  <section class="what-section">
+    <div class="what-inner">
+      <div class="section-label stagger-1">Platform Overview</div>
+      <h2 class="stagger-2">What is ComplianceDaddy?</h2>
+      <div class="cards-grid">
+        <div class="card stagger-2">
+          <div class="card-icon">📋</div>
+          <h3>Digital Audits</h3>
+          <p>Replace paper checklists with intelligent digital audits. Scan your venue once and generate instant compliance snapshots across all regulatory domains.</p>
+        </div>
+        <div class="card stagger-3">
+          <div class="card-icon">🤖</div>
+          <h3>AI-Powered Checklists</h3>
+          <p>Context-aware checklists that adapt to your venue type, jurisdiction, and license class. Our AI flags issues before inspectors do.</p>
+        </div>
+        <div class="card stagger-4">
+          <div class="card-icon">📊</div>
+          <h3>Automated Reports</h3>
+          <p>Board-ready compliance reports generated in seconds. Share with stakeholders, attorneys, or regulators—formatted and citation-ready.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Section -->
+  <section class="why-section">
+    <div class="why-inner">
+      <div class="section-label">The Problem & Solution</div>
+      <h2>Why It Matters.</h2>
+      <div class="why-grid">
+        <div>
+          <span class="col-label red">⚠ The Old Way</span>
+          <div class="pain-item">
+            <div class="pain-icon">📁</div>
+            <div><h4>Paper Trail Chaos</h4><p>Binders, folders, sticky notes. Compliance docs scatter across spreadsheets, emails, and filing cabinets—impossible to audit quickly.</p></div>
+          </div>
+          <div class="pain-item">
+            <div class="pain-icon">💸</div>
+            <div><h4>Costly Violations</h4><p>A single missed inspection or expired permit can mean fines, license suspension, or forced closure. The stakes are too high to rely on memory.</p></div>
+          </div>
+          <div class="pain-item">
+            <div class="pain-icon">⏱</div>
+            <div><h4>Manager Overload</h4><p>Compliance shouldn't consume 20% of your ops manager's week. Manual tracking steals time from guest experience and revenue.</p></div>
+          </div>
+        </div>
+        <div>
+          <span class="col-label green">✦ The ComplianceDaddy Way</span>
+          <div class="solution-item">
+            <div class="pain-icon">⚡</div>
+            <div><h4>Single Source of Truth</h4><p>Every audit, checklist, and report lives in one platform—searchable, timestamped, and export-ready at a moment's notice.</p></div>
+          </div>
+          <div class="solution-item">
+            <div class="pain-icon">🛡</div>
+            <div><h4>Proactive Alerts</h4><p>Know about permit expirations 30, 60, 90 days out. Our system watches the calendar so you don't have to.</p></div>
+          </div>
+          <div class="solution-item">
+            <div class="pain-icon">🎯</div>
+            <div><h4>Ops That Run Themselves</h4><p>Automated workflows route tasks to the right person at the right time. Accountability built in, exceptions surfaced instantly.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How Section -->
+  <section class="how-section">
+    <div class="how-inner">
+      <div class="section-label">Simple by Design</div>
+      <h2>How It Works.</h2>
+      <div class="stepper">
+        <div class="step">
+          <div class="step-num">
+            <span class="step-icon">🏢</span>
+            <div class="step-connector"></div>
+          </div>
+          <h3>Scan Your Venue</h3>
+          <p>Onboard in minutes. Input your venue type, licenses, jurisdiction, and operational details. We build your compliance profile.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">
+            <span class="step-icon">⚙</span>
+            <div class="step-connector"></div>
+          </div>
+          <h3>Auto-Audit</h3>
+          <p>Our AI runs continuous compliance checks against your profile—matching regs, flagging gaps, and scoring your readiness in real-time.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">
+            <span class="step-icon">📄</span>
+            <div class="step-connector"></div>
+          </div>
+          <h3>Generate Reports</h3>
+          <p>One click. Formatted compliance reports ready for regulators, investors, or internal review. Always audit-trail backed.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">
+            <span class="step-icon">✅</span>
+          </div>
+          <h3>Stay Ahead</h3>
+          <p>Proactive alerts, scheduled re-audits, and team task flows keep your venue perpetually compliant—not just inspection-ready.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Bottom -->
+  <section class="cta-bottom">
+    <div class="section-label" style="justify-content:center;margin-bottom:20px;">Early Access</div>
+    <h2>Ready to ditch the clipboard?</h2>
+    <p>Join hospitality operators getting early access to the platform that puts compliance on autopilot.</p>
+    <button class="btn-amber" style="font-size:20px;padding:22px 56px;" onclick="openWaitlist()">
+      Join Waitlist — It's Free
+    </button>
+  </section>
+
+  <!-- Footer (inline) -->
+  <div id="footer-home"></div>
+</div>
+
+<!-- ─── PAGE: ABOUT ─── -->
+<div id="page-about" class="page">
+  <section class="about-hero">
+    <div class="about-hero-inner">
+      <div class="founder-img">👤</div>
+      <div class="about-hero-text">
+        <div class="section-label">Our Story</div>
+        <h1>We've lived<br><span>hospitality chaos.</span><br>Now we're automating it.</h1>
+        <p>Born from years of running late-night venues, navigating liquor board inspections at 2am, and drowning in binders—ComplianceDaddy is built by operators, for operators.</p>
+        <button class="btn-amber" onclick="openWaitlist()">Get Early Access →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="timeline-section">
+    <div class="timeline-inner">
+      <div class="section-label">Our Journey</div>
+      <h2>How We Got Here.</h2>
+      <div class="timeline">
+        <div class="milestone stagger-1">
+          <div class="milestone-dot"></div>
+          <div class="milestone-year">2024</div>
+          <h4>The Problem</h4>
+          <p>Founder survives a $12,000 liquor board fine from a documentation error. Decides the industry needs a better tool.</p>
+        </div>
+        <div class="milestone stagger-2">
+          <div class="milestone-dot"></div>
+          <div class="milestone-year">Early 2025</div>
+          <h4>The Idea</h4>
+          <p>50+ interviews with bar owners, nightclub operators, and restaurant GMs. Universal pain confirmed. ComplianceDaddy is born.</p>
+        </div>
+        <div class="milestone stagger-3">
+          <div class="milestone-dot"></div>
+          <div class="milestone-year">Late 2025</div>
+          <h4>Building the MVP</h4>
+          <p>Core audit engine, checklist AI, and reporting module developed. Beta partners onboard in Mobile, AL and New Orleans.</p>
+        </div>
+        <div class="milestone stagger-4">
+          <div class="milestone-dot"></div>
+          <div class="milestone-year">2026</div>
+          <h4>Launch Soon →</h4>
+          <p>Full platform launch across the Gulf Coast, with national expansion roadmap locked and investor deck live.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mission-section">
+    <div class="section-label" style="justify-content:center;">Our Mission</div>
+    <div class="mission-quote">
+      ComplianceDaddy: <em>Precision for pros who can't afford mistakes.</em> We believe compliance infrastructure should be as sophisticated as the venues it protects.
+    </div>
+  </section>
+
+  <section style="padding:80px 48px;background:var(--leather);background-image:repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(0,0,0,0.12) 12px,rgba(0,0,0,0.12) 13px);text-align:center;">
+    <div style="max-width:600px;margin:0 auto;">
+      <div class="section-label" style="justify-content:center;">Be First</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-0.02em;margin-bottom:20px;">Join the waitlist.</h2>
+      <p style="color:var(--text-secondary);font-size:18px;margin-bottom:40px;">Early access members get locked-in founding pricing and direct input into the product roadmap.</p>
+      <button class="btn-amber" onclick="openWaitlist()">Secure Your Spot</button>
+    </div>
+  </section>
+
+  <div id="footer-about"></div>
+</div>
+
+<!-- ─── PAGE: PITCH ─── -->
+<div id="page-pitch" class="page">
+  <!-- Gate screen (default) -->
+  <div class="pitch-gate" id="pitchGate">
+    <div class="pitch-gate-box">
+      <div class="lock-icon">🔒</div>
+      <h2>Pitch Deck</h2>
+      <p>This page is restricted to authorized investors and partners only. Access is granted via a private shared link.</p>
+      <div class="form-group">
+        <label>Access Code</label>
+        <input type="password" id="pitchCodeInput" placeholder="Enter your access code" onkeydown="if(event.key==='Enter')checkPitchCode()">
+      </div>
+      <button class="btn-amber" style="width:100%;justify-content:center;margin-top:8px;" onclick="checkPitchCode()">Unlock Deck →</button>
+      <p id="pitchError" style="color:#e05050;font-size:14px;margin-top:12px;display:none;">Invalid access code. Contact info@compliancedaddy.com for access.</p>
+      <div class="access-hint">
+        🔐 Access is granted by ComplianceDaddy directly.<br>Contact <a href="mailto:info@compliancedaddy.com" style="color:var(--amber);">info@compliancedaddy.com</a> to request investor access.
+      </div>
+    </div>
+  </div>
+
+  <!-- Pitch Content (hidden until unlocked) -->
+  <div class="pitch-content" id="pitchContent">
+    <div class="pitch-header">
+      <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;">INVESTOR MATERIALS — CONFIDENTIAL</div>
+      <h1>ComplianceDaddy Pitch Deck</h1>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-amber" onclick="alert('Download initiated. (Connect to real PDF for deployment.)')">⬇ Download PDF</button>
+        <button class="btn-steel" onclick="navigate('contact')">Contact Founders</button>
+      </div>
+    </div>
+
+    <div class="slides-carousel">
+      <!-- Slides -->
+      <div class="slide active" id="slide-1">
+        <div class="slide-number">01 / 10</div>
+        <div style="font-size:64px;margin-bottom:24px;">⚖</div>
+        <h2>ComplianceDaddy</h2>
+        <p>The AI-powered compliance operations platform purpose-built for the hospitality industry. Audits, checklists, and reports—automated.</p>
+        <div style="margin-top:32px;font-size:13px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;">2026 Seed Round</div>
+      </div>
+
+      <div class="slide" id="slide-2">
+        <div class="slide-number">02 / 10</div>
+        <h2>The Problem</h2>
+        <p>750,000+ licensed hospitality venues in the US navigate an average of 23 distinct compliance domains. 67% rely on paper-based systems. Violations cost the industry $4.8B annually in fines, closures, and legal fees.</p>
+        <div class="stat" style="margin-top:32px;">$4.8B</div>
+        <div class="stat-label">Annual compliance violation cost — US hospitality</div>
+      </div>
+
+      <div class="slide" id="slide-3">
+        <div class="slide-number">03 / 10</div>
+        <h2>Market Size</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:16px;width:100%;max-width:700px;">
+          <div><div class="stat" style="font-size:48px;">$2.1B</div><div class="stat-label">TAM — Hospitality Compliance SaaS</div></div>
+          <div><div class="stat" style="font-size:48px;">$380M</div><div class="stat-label">SAM — Mid-market venues US</div></div>
+          <div><div class="stat" style="font-size:48px;">$45M</div><div class="stat-label">SOM — Y1-3 target</div></div>
+        </div>
+      </div>
+
+      <div class="slide" id="slide-4">
+        <div class="slide-number">04 / 10</div>
+        <h2>Our Solution</h2>
+        <p>ComplianceDaddy replaces paper-based compliance workflows with an AI-driven platform: smart audits that adapt to venue type, AI checklists trained on 10,000+ regulatory documents, and one-click report generation that keeps venues inspection-ready 365 days a year.</p>
+      </div>
+
+      <div class="slide" id="slide-5">
+        <div class="slide-number">05 / 10</div>
+        <h2>Product Demo</h2>
+        <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(212,160,23,0.15);border-radius:8px;padding:32px;width:100%;max-width:640px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:left;">
+            <div style="padding:16px;background:rgba(212,160,23,0.05);border-radius:4px;border:1px solid rgba(212,160,23,0.1);">
+              <div style="color:var(--amber);font-size:24px;margin-bottom:8px;">📋</div>
+              <div style="font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">Active Audits</div>
+              <div style="font-size:28px;font-weight:700;color:var(--amber);">12</div>
+            </div>
+            <div style="padding:16px;background:rgba(212,160,23,0.05);border-radius:4px;border:1px solid rgba(212,160,23,0.1);">
+              <div style="color:var(--amber);font-size:24px;margin-bottom:8px;">✅</div>
+              <div style="font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">Compliance Score</div>
+              <div style="font-size:28px;font-weight:700;color:var(--amber);">97%</div>
+            </div>
+            <div style="padding:16px;background:rgba(212,160,23,0.05);border-radius:4px;border:1px solid rgba(212,160,23,0.1);">
+              <div style="color:var(--amber);font-size:24px;margin-bottom:8px;">⚠</div>
+              <div style="font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">Open Flags</div>
+              <div style="font-size:28px;font-weight:700;color:var(--amber);">2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide" id="slide-6">
+        <div class="slide-number">06 / 10</div>
+        <h2>Business Model</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;max-width:600px;text-align:left;">
+          <div style="padding:24px;background:rgba(212,160,23,0.05);border-radius:6px;border:1px solid rgba(212,160,23,0.1);">
+            <div style="color:var(--amber);font-weight:700;margin-bottom:8px;">Starter</div>
+            <div style="font-size:32px;font-weight:800;color:var(--text-primary);">$149<span style="font-size:14px;color:var(--text-dim)">/mo</span></div>
+            <div style="font-size:13px;color:var(--text-dim);margin-top:8px;">1-3 venues, core audits</div>
+          </div>
+          <div style="padding:24px;background:rgba(212,160,23,0.08);border-radius:6px;border:1px solid rgba(212,160,23,0.2);">
+            <div style="color:var(--amber);font-weight:700;margin-bottom:8px;">Pro / Enterprise</div>
+            <div style="font-size:32px;font-weight:800;color:var(--amber);">$499+<span style="font-size:14px;color:var(--text-dim)">/mo</span></div>
+            <div style="font-size:13px;color:var(--text-dim);margin-top:8px;">Unlimited venues, API, white-label</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide" id="slide-7">
+        <div class="slide-number">07 / 10</div>
+        <h2>Traction</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%;max-width:600px;">
+          <div><div class="stat" style="font-size:48px;">340+</div><div class="stat-label">Waitlist signups</div></div>
+          <div><div class="stat" style="font-size:48px;">8</div><div class="stat-label">Beta partners</div></div>
+          <div><div class="stat" style="font-size:48px;">$0</div><div class="stat-label">CAC to date (organic)</div></div>
+        </div>
+      </div>
+
+      <div class="slide" id="slide-8">
+        <div class="slide-number">08 / 10</div>
+        <h2>Competitive Landscape</h2>
+        <p>Current "solutions": spreadsheets, legacy GRC tools built for enterprise finance, or nothing. No purpose-built compliance platform exists for the independent hospitality venue operator. ComplianceDaddy is first-to-market at this price point and vertical focus.</p>
+      </div>
+
+      <div class="slide" id="slide-9">
+        <div class="slide-number">09 / 10</div>
+        <h2>The Team</h2>
+        <div style="display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+          <div style="text-align:center;">
+            <div style="width:80px;height:80px;background:var(--steel-gradient);border-radius:50%;border:2px solid rgba(212,160,23,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px;">👤</div>
+            <div style="font-weight:700;">Founder / CEO</div>
+            <div style="color:var(--text-dim);font-size:13px;margin-top:4px;">10yr hospitality ops</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:80px;height:80px;background:var(--steel-gradient);border-radius:50%;border:2px solid rgba(212,160,23,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px;">👤</div>
+            <div style="font-weight:700;">CTO</div>
+            <div style="color:var(--text-dim);font-size:13px;margin-top:4px;">ML engineer, ex-Amazon</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:80px;height:80px;background:var(--steel-gradient);border-radius:50%;border:2px solid rgba(212,160,23,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px;">👤</div>
+            <div style="font-weight:700;">Head of Compliance</div>
+            <div style="color:var(--text-dim);font-size:13px;margin-top:4px;">Former ALDOC regulator</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide" id="slide-10">
+        <div class="slide-number">10 / 10</div>
+        <h2>The Ask</h2>
+        <div class="stat">$750K</div>
+        <div class="stat-label">Pre-Seed Round</div>
+        <p style="margin-top:24px;">Runway: 18 months. Use of funds: 60% product, 25% GTM, 15% ops. Targeting 500 paying venues by end of 2026.</p>
+        <div style="margin-top:32px;">
+          <a href="mailto:info@compliancedaddy.com" class="btn-amber">Get in Touch →</a>
+        </div>
+      </div>
+
+      <!-- Nav controls -->
+      <div class="slide-nav">
+        <button class="slide-btn" onclick="prevSlide()">←</button>
+        <div class="slide-dots" id="slideDots"></div>
+        <button class="slide-btn" onclick="nextSlide()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-pitch"></div>
+</div>
+
+<!-- ─── PAGE: CONTACT ─── -->
+<div id="page-contact" class="page">
+  <section class="contact-hero">
+    <div class="contact-hero-inner">
+      <div class="section-label">Get In Touch</div>
+      <h1>Contact Us.</h1>
+      <p>Questions, partnerships, or press inquiries—we respond within 24 hours.</p>
+    </div>
+  </section>
+
+  <div class="contact-section">
+    <div class="contact-grid">
+      <div class="contact-form-wrapper">
+        <h3 style="font-family:'Syne',sans-serif;font-size:24px;margin-bottom:32px;">Send a Message</h3>
+        <form id="contactForm" onsubmit="submitContact(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="jane@yourbar.com" required>
+          </div>
+          <div class="form-group">
+            <label>Venue Type</label>
+            <select name="venue_type" required>
+              <option value="" disabled selected>Select your venue type</option>
+              <option>Bar / Cocktail Lounge</option>
+              <option>Nightclub</option>
+              <option>Restaurant</option>
+              <option>Rooftop / Event Space</option>
+              <option>Hotel Bar</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea name="message" placeholder="Tell us about your compliance challenges or questions..." required></textarea>
+          </div>
+          <button type="submit" class="btn-amber" style="width:100%;justify-content:center;">Send Message →</button>
+        </form>
+      </div>
+      <div class="contact-info">
+        <h3>Find Us</h3>
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">Address</div>
+            <div class="info-value">Mobile, Alabama, USA</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📧</div>
+          <div>
+            <div class="info-label">Email</div>
+            <div class="info-value"><a href="mailto:info@compliancedaddy.com">info@compliancedaddy.com</a></div>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📱</div>
+          <div>
+            <div class="info-label">Phone</div>
+            <div class="info-value">+1 (251) 000-0000</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🕐</div>
+          <div>
+            <div class="info-label">Response Hours</div>
+            <div class="info-value">Mon–Fri, 9am–6pm CT</div>
+          </div>
+        </div>
+        <div class="map-placeholder">
+          <div class="map-pin" style="top:35%;left:40%;">📍</div>
+          <div style="background:var(--steel-gradient);width:100%;height:100%;position:absolute;opacity:0.3;background-image:linear-gradient(rgba(212,160,23,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(212,160,23,0.05) 1px,transparent 1px);background-size:30px 30px;"></div>
+          <div class="map-label">Mobile, Alabama — Gulf Coast HQ</div>
+        </div>
+        <div style="margin-top:24px;">
+          <div class="info-label" style="margin-bottom:12px;">Follow Along</div>
+          <div class="social-icons">
+            <a href="https://linkedin.com" target="_blank" title="LinkedIn">in</a>
+            <a href="https://github.com" target="_blank" title="GitHub">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="footer-contact"></div>
+</div>
+
+<!-- ─── WAITLIST MODAL ─── -->
+<div class="modal-overlay" id="waitlistOverlay" onclick="if(event.target===this)closeWaitlist()">
+  <div class="waitlist-modal-inner">
+    <button class="modal-close" onclick="closeWaitlist()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:var(--text-dim);font-size:24px;cursor:pointer;">✕</button>
+    <div style="font-size:32px;margin-bottom:16px;">⚖</div>
+    <h3>Join the Waitlist</h3>
+    <p>Early access for operators who move first. Lock in founding-member pricing.</p>
+    <form id="waitlistForm" onsubmit="submitWaitlist(event)">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="wl-name" placeholder="Jane Smith" required>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="wl-email" placeholder="jane@yourbar.com" required>
+      </div>
+      <div class="form-group">
+        <label>Venue Type</label>
+        <select id="wl-venue" required>
+          <option value="" disabled selected>Select your venue type</option>
+          <option>Bar / Cocktail Lounge</option>
+          <option>Nightclub</option>
+          <option>Restaurant</option>
+          <option>Rooftop / Event Space</option>
+          <option>Hotel Bar</option>
+          <option>Multi-venue Group</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-amber" style="width:100%;justify-content:center;margin-top:8px;">
+        Secure My Spot →
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ─── SUCCESS MODAL ─── -->
+<div class="modal-overlay" id="successOverlay" onclick="if(event.target===this)closeSuccess()">
+  <div class="modal" style="position:relative;">
+    <button onclick="closeSuccess()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:var(--text-dim);font-size:24px;cursor:pointer;">✕</button>
+    <div class="modal-icon">✅</div>
+    <h3>You're in.</h3>
+    <p>Early access incoming. We'll reach out with your founding-member details as we approach launch. Welcome to the crew.</p>
+    <button class="btn-amber" onclick="closeSuccess()" style="width:100%;justify-content:center;">
+      Back to Exploring
+    </button>
+  </div>
+</div>
+
+<!-- Footer Template (injected into each page) -->
+<template id="footerTemplate">
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:16px;display:inline-flex;">⚖ ComplianceDaddy</div>
+        <p>Hospitality compliance, automated. Built by operators, for operators.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#" onclick="navigate('home');return false;">Home</a></li>
+          <li><a href="#" onclick="navigate('about');return false;">About Us</a></li>
+          <li><a href="#" onclick="navigate('contact');return false;">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p>📍 Mobile, Alabama</p>
+        <p>📧 <a href="mailto:info@compliancedaddy.com">info@compliancedaddy.com</a></p>
+        <p>🕐 Mon–Fri, 9am–6pm CT</p>
+        <div class="social-icons">
+          <a href="https://linkedin.com" target="_blank" title="LinkedIn">in</a>
+          <a href="https://github.com" target="_blank" title="GitHub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 ComplianceDaddy. All rights reserved.</p>
+      <p style="color:var(--text-dim);font-size:13px;">Mobile, AL · Pre-Launch</p>
+    </div>
+  </footer>
+</template>
+
+<script>
+  // ─── CURSOR ───
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+    ring.style.left = e.clientX + 'px';
+    ring.style.top = e.clientY + 'px';
+  });
+  document.addEventListener('mousedown', () => ring.style.transform = 'translate(-50%,-50%) scale(0.8)');
+  document.addEventListener('mouseup', () => ring.style.transform = 'translate(-50%,-50%) scale(1)');
+
+  // ─── ROUTING ───
+  const pages = ['home', 'about', 'pitch', 'contact'];
+  const PITCH_CODE = 'CD2026';
+
+  function navigate(page) {
+    pages.forEach(p => {
+      const el = document.getElementById('page-' + p);
+      el.classList.remove('active');
+    });
+    const target = document.getElementById('page-' + page);
+    target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.pushState({page}, '', '#' + page);
+    injectFooters();
+  }
+
+  // Handle back/forward
+  window.addEventListener('popstate', e => {
+    if (e.state && e.state.page) navigate(e.state.page);
+  });
+
+  // Check URL hash for pitch access
+  function checkHash() {
+    const hash = window.location.hash;
+    if (hash.startsWith('#pitch/')) {
+      const code = hash.split('/')[1];
+      if (code && code.toUpperCase() === PITCH_CODE) {
+        navigate('pitch');
+        unlockPitch();
+        return;
+      }
+    }
+    if (hash === '#about') navigate('about');
+    else if (hash === '#contact') navigate('contact');
+    else if (hash === '#pitch') navigate('pitch');
+  }
+
+  // ─── PITCH DECK ───
+  let currentSlide = 0;
+  const totalSlides = 10;
+
+  function buildDots() {
+    const dotsEl = document.getElementById('slideDots');
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < totalSlides; i++) {
+      const d = document.createElement('div');
+      d.className = 'slide-dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goToSlide(i);
+      dotsEl.appendChild(d);
+    }
+  }
+
+  function goToSlide(n) {
+    document.getElementById('slide-' + (currentSlide + 1)).classList.remove('active');
+    currentSlide = (n + totalSlides) % totalSlides;
+    document.getElementById('slide-' + (currentSlide + 1)).classList.add('active');
+    document.querySelectorAll('.slide-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === currentSlide);
+    });
+  }
+
+  function nextSlide() { goToSlide(currentSlide + 1); }
+  function prevSlide() { goToSlide(currentSlide - 1); }
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('page-pitch').classList.contains('active')) {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    }
+  });
+
+  function checkPitchCode() {
+    const input = document.getElementById('pitchCodeInput').value.trim().toUpperCase();
+    if (input === PITCH_CODE) {
+      unlockPitch();
+    } else {
+      document.getElementById('pitchError').style.display = 'block';
+    }
+  }
+
+  function unlockPitch() {
+    document.getElementById('pitchGate').style.display = 'none';
+    document.getElementById('pitchContent').classList.add('visible');
+    buildDots();
+  }
+
+  // ─── WAITLIST MODAL ───
+  function openWaitlist() {
+    document.getElementById('waitlistOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeWaitlist() {
+    document.getElementById('waitlistOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeSuccess() {
+    document.getElementById('successOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function submitWaitlist(e) {
+    e.preventDefault();
+    const name = document.getElementById('wl-name').value;
+    const email = document.getElementById('wl-email').value;
+    const venue = document.getElementById('wl-venue').value;
+    // In production: POST to backend or mailto
+    const mailto = `mailto:info@compliancedaddy.com?subject=Waitlist%20Signup%3A%20${encodeURIComponent(name)}&body=Name%3A%20${encodeURIComponent(name)}%0AEmail%3A%20${encodeURIComponent(email)}%0AVenue%20Type%3A%20${encodeURIComponent(venue)}`;
+    window.location.href = mailto;
+    closeWaitlist();
+    document.getElementById('waitlistForm').reset();
+    document.getElementById('successOverlay').classList.add('open');
+  }
+
+  function submitContact(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const name = fd.get('name'), email = fd.get('email'), venue = fd.get('venue_type'), msg = fd.get('message');
+    const mailto = `mailto:info@compliancedaddy.com?subject=Contact%20from%20${encodeURIComponent(name)}&body=Name%3A%20${encodeURIComponent(name)}%0AEmail%3A%20${encodeURIComponent(email)}%0AVenue%3A%20${encodeURIComponent(venue)}%0A%0AMessage%3A%0A${encodeURIComponent(msg)}`;
+    window.location.href = mailto;
+    e.target.reset();
+    alert('Opening your email client. If it doesn\'t open, email us directly at info@compliancedaddy.com');
+  }
+
+  // ─── MOBILE NAV ───
+  function toggleMobile() {
+    const menu = document.getElementById('mobileMenu');
+    const burger = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    burger.classList.toggle('open');
+  }
+  function closeMobile() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+
+  // ─── PARALLAX ───
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const heroBg = document.querySelector('.hero-bg');
+    if (heroBg) heroBg.style.transform = `translateY(${y * 0.1}px)`;
+  });
+
+  // ─── FOOTER INJECTION ───
+  function injectFooters() {
+    const template = document.getElementById('footerTemplate').content;
+    const ids = ['footer-home', 'footer-about', 'footer-pitch', 'footer-contact'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.hasChildNodes()) {
+        el.appendChild(template.cloneNode(true));
+      }
+    });
+  }
+
+  // ─── SCROLL REVEAL ───
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  function observeElements() {
+    document.querySelectorAll('.card, .pain-item, .solution-item, .milestone, .step').forEach(el => {
+      el.style.transition = 'opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+      observer.observe(el);
+    });
+  }
+
+  // ─── INIT ───
+  document.addEventListener('DOMContentLoaded', () => {
+    injectFooters();
+    checkHash();
+    observeElements();
+
+    // Re-observe on navigation
+    const origNavigate = window.navigate;
+    setTimeout(observeElements, 100);
+  });
+</script>
+</body>
+</html>
