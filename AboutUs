@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | ComplianceDaddy - Hospitality Compliance Automated</title>
+  <meta name="description" content="Meet the founder behind ComplianceDaddy: 17+ years automating hospitality compliance for bars, restaurants, nightclubs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    /* Exact CSS copy from Index.html - RESET, ROOT VARS, BODY, CURSOR, PAGES, NAV, TYPO, LAYOUT, BUTTONS, etc. */
+    *, ::before, ::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      /* Reino Studio palette: cream/white, near-black, minimal accent */
+      --bg: #f5f3ee; --bg-alt: #edeae4; --black: #1a1a1a; --black-pure: #0d0d0d; --white: #f5f3ee;
+      --gray: #7a7672; --gray-light: #a8a49f; --gray-xlight: #d4d0cb; --border: #dedad4; --border-dark: #c8c4be;
+      --accent: #1a1a1a; /* Black as accent on white bg */
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 17px; line-height: 1.65; overflow-x: hidden; cursor: none; }
+    /* CURSOR */
+    #cur-dot { width: 5px; height: 5px; background: var(--black); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+    #cur-ring { width: 26px; height: 26px; border: 1px solid rgba(26,26,26,0.35); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.12s ease; }
+    body:hover #cur-ring { opacity: 1; }
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; animation: pgIn 0.6s cubic-bezier(0.4,0,0.2,1) both; }
+    @keyframes pgIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    /* NAV - copy exact */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 0 56px; height: 68px; background: rgba(245,243,238,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 21px; letter-spacing: 0.1em; color: var(--black); text-decoration: none; cursor: pointer; }
+    .nav-logo span { color: var(--gray); }
+    .nav-links { display: flex; align-items: center; gap: 44px; list-style: none; }
+    .nav-links a { font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 1px; background: var(--black); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+    .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+    .nav-links a:hover, .nav-links a.active { color: var(--black); }
+    .nav-cta-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white) !important; background: var(--black); border: none; padding: 10px 22px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .nav-cta-btn:hover { background: #333; }
+    .nav-cta-btn::after { display: none !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--black); transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; top: 68px; left: 0; right: 0; background: var(--bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 32px 40px; flex-direction: column; gap: 0; z-index: 999; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); text-decoration: none; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .mobile-menu a:hover { color: var(--black); }
+    /* TYPO */
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gray); }
+    .body-lg { font-size: 18px; line-height: 1.7; color: var(--gray); }
+    .body-md { font-size: 15px; line-height: 1.75; color: var(--gray); }
+    /* LAYOUT */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 56px; }
+    .pt-nav { padding-top: 68px; }
+    /* BUTTONS */
+    .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 16px 36px; border: none; cursor: pointer; transition: all 0.25s ease; text-decoration: none; }
+    .btn-primary:hover { background: #333; transform: translateY(-1px); }
+    .btn-outline { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 15px 35px; border: 1px solid var(--border-dark); cursor: pointer; transition: all 0.25s ease; text-decoration: none; }
+    .btn-outline:hover { border-color: var(--black); background: var(--black); color: var(--white); }
+    .btn-primary-white { display: inline-flex; align-items: center; gap: 10px; background: var(--white); color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 16px 36px; border: none; cursor: pointer; transition: all 0.25s ease; text-decoration: none; }
+    .btn-primary-white:hover { background: var(--bg-alt); transform: translateY(-1px); }
+    /* DIVIDER */
+    .divider { width: 100%; height: 1px; background: var(--border); }
+    .divider-sm { width: 40px; height: 1px; background: var(--gray-light); margin-bottom: 32px; }
+    /* ABOUT HERO */
+    .about-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; padding-top: 68px; background: var(--bg); }
+    .about-hero-img { position: relative; overflow: hidden; }
+    .about-hero-img img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .about-hero-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 70%, var(--bg) 100%); }
+    .about-hero-text { display: flex; flex-direction: column; justify-content: flex-end; padding: 80px 56px 80px 72px; background: var(--bg); }
+    .about-hero-text h1 { font-family: 'DM Serif Display', serif; font-size: 64px; line-height: 1.0; letter-spacing: -0.02em; margin: 24px 0 32px; color: var(--black); }
+    .about-hero-text h1 em { font-style: italic; color: var(--gray); }
+    .about-hero-text p { font-size: 17px; color: var(--gray); max-width: 420px; line-height: 1.7; margin-bottom: 40px; }
+    /* TIMELINE */
+    .timeline-section { padding: 120px 0; border-top: 1px solid var(--border); background: var(--bg); }
+    .timeline-header { padding: 0 56px 80px; display: flex; gap: 80px; align-items: flex-end; }
+    .timeline-header h2 { font-family: 'DM Serif Display', serif; font-size: 56px; letter-spacing: -0.02em; color: var(--black); }
+    .timeline-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); margin: 0 56px; }
+    .timeline-item { background: var(--bg); padding: 48px 36px; position: relative; }
+    .timeline-item::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--black); margin-bottom: 24px; }
+    .timeline-year { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 0.22em; color: var(--gray-light); margin-bottom: 12px; }
+    .timeline-item h4 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 12px; color: var(--black); }
+    .timeline-item p { font-size: 14px; color: var(--gray); line-height: 1.65; }
+    /* MISSION */
+    .mission-section { padding: 140px 56px; border-top: 1px solid var(--border); background: var(--bg-alt); display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: center; }
+    .mission-label { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gray-light); }
+    .mission-quote { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1.1; letter-spacing: -0.01em; color: var(--black); }
+    .mission-quote em { font-style: italic; color: var(--gray); }
+    /* FULL BLEED CTA */
+    .fullbleed-cta { position: relative; min-height: 560px; display: flex; align-items: center; overflow: hidden; }
+    .fullbleed-bg { position: absolute; inset: 0; }
+    .fullbleed-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+    .fullbleed-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,13,13,0.94) 0%, rgba(13,13,13,0.70) 55%, rgba(13,13,13,0.25) 100%); }
+    .fullbleed-content { position: relative; z-index: 2; padding: 0 56px; max-width: 680px; }
+    .fullbleed-content h2 { font-family: 'DM Serif Display', serif; font-size: 68px; line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 24px; color: var(--white); }
+    .fullbleed-content h2 em { font-style: italic; color: rgba(245,243,238,0.65); }
+    .fullbleed-content p { font-size: 18px; color: rgba(245,243,238,0.65); margin-bottom: 40px; line-height: 1.6; }
+    /* FOOTER PLACEHOLDER - JS injects */
+    #footer-about { min-height: 400px; }
+    /* RESPONSIVE - exact from Index */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .container { padding: 0 20px; }
+      .about-hero { grid-template-columns: 1fr; }
+      .about-hero-img { height: 320px; }
+      .about-hero-img::after { background: linear-gradient(0deg, var(--bg) 0%, transparent 40%); }
+      .about-hero-text { padding: 48px 24px 60px; }
+      .about-hero-text h1 { font-size: 44px; }
+      .timeline-header { padding: 0 24px 48px; flex-direction: column; gap: 20px; }
+      .timeline-track { grid-template-columns: 1fr 1fr; margin: 0 24px; }
+      .timeline-section { padding: 80px 0; }
+      .mission-section { padding: 80px 24px; grid-template-columns: auto 1fr; gap: 32px; }
+      .mission-quote { font-size: 32px; }
+      .fullbleed-content { padding: 0 24px; max-width: 100%; }
+      .fullbleed-content h2 { font-size: 44px; }
+    }
+    @media (max-width: 480px) {
+      .about-hero-text h1 { font-size: 38px; }
+      .timeline-track { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <div class="nav-logo" onclick="navigate('home')">COMPLIANCE<span>DADDY</span></div>
+    <ul class="nav-links">
+      <li><a id="nl-home" href="#home" onclick="navigate('home')">Home</a></li>
+      <li><a id="nl-about" href="#about" onclick="navigate('about')" class="active">About</a></li>
+      <li><a id="nl-contact" href="#contact" onclick="navigate('contact')">Contact</a></li>
+    </ul>
+    <button class="nav-cta-btn" onclick="openWaitlist()">Join Waitlist</button>
+    <button class="hamburger" id="burger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#home" onclick="navigate('home')">Home</a>
+    <a href="#about" onclick="navigate('about')">About</a>
+    <a href="#contact" onclick="navigate('contact')">Contact</a>
+    <a href="#" onclick="openWaitlist(); closeMobile(); event.preventDefault();" style="color: var(--black); font-weight: 600;">Join Waitlist</a>
+  </div>
+
+  <!-- ABOUT PAGE CONTENT - Active by default for standalone -->
+  <div id="page-about" class="page active">
+
+    <!-- HERO -->
+    <section class="about-hero">
+      <div class="about-hero-img">
+        <img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=1000&q=80" alt="Liffort Hobley, Founder of ComplianceDaddy" loading="lazy">
+      </div>
+      <div class="about-hero-text">
+        <div class="eyebrow">Our Story</div>
+        <h1>17+ years in hospitality.<br>One founder.<br>emComplianceDaddy.em</h1>
+        <p>I'm Liffort Hobley. With over 17 years managing premium venues, F&B ops, events, and compliance nightmares in Mobile, AL and beyond, I built ComplianceDaddy to end the chaos of manual audits, expired permits, and fines that steal from operators like us.</p>
+        <button class="btn-primary" onclick="openWaitlist()">Get Early Access</button>
+      </div>
+    </section>
+
+    <!-- TIMELINE: Founder Journey & Why Built -->
+    <section class="timeline-section">
+      <div class="timeline-header">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 16px;">Founder Journey</div>
+          <h2>Why I built this.</h2>
+        </div>
+        <p class="body-md" style="max-width: 340px;">From surviving $12K fines to automating compliance for every bar, restaurant, and nightclub. Built by an operator who lived the pain.</p>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-item">
+          <div class="timeline-year">2009</div>
+          <h4>Hospitality Start</h4>
+          <p>Graduated in Hospitality and Culinary Arts. Dove into premium suites, F&B, catering, and event ops—learning compliance the hard way. The expensive way.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2010s</div>
+          <h4>Venue Ops Grind</h4>
+          <p>25+ years leading bars, restaurants, nightclubs and stadiums. Managed health codes, liquor boards, fire inspections—manual checklists eating 20+ hours/week.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024</div>
+          <h4>The Breaking Point</h4>
+          <p>A $12K fine and 48 hour shut down from one missed doc exposed the insanity. No tool existed for independent operators. Time to build it.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2026</div>
+          <h4>ComplianceDaddy Live</h4>
+          <p>AI audits, checklists, reports—for bars/restaurants/nightclubs. </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section class="mission-section">
+      <div class="mission-label">Our Mission</div>
+      <div>
+        <p class="mission-quote">emPrecision compliance for pros.em<br>Because venues deserve ops that scale, not binders that bury you.</p>
+        <div style="margin-top: 48px;">
+          <button class="btn-primary" onclick="openWaitlist()">Join the Waitlist</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FULL BLEED CTA -->
+    <section class="fullbleed-cta" style="min-height: 440px;">
+      <div class="fullbleed-bg">
+        <img src="https://images.unsplash.com/photo-1560053608-13721b19a8e1?w=1600&q=85" alt="Upscale hospitality venue" loading="lazy">
+      </div>
+      <div class="fullbleed-overlay"></div>
+      <div class="fullbleed-content">
+        <div class="eyebrow" style="margin-bottom: 20px;">Early Access</div>
+        <h2>Be first.<br>Founding empricingem locked.</h2>
+        <button class="btn-primary-white" onclick="openWaitlist()" style="margin-top: 32px;">Secure My Spot</button>
+      </div>
+    </section>
+
+    <div id="footer-about"></div>
+  </div>
+
+  <!-- WAITLIST & SUCCESS MODALS - copy exact from Index -->
+  <div class="overlay" id="waitlistOverlay" onclick="if(event.target===this) closeWaitlist()">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeWaitlist()">&times;</button>
+      <h3>Join the Waitlist</h3>
+      <p class="sub">Early access for operators who move first. Lock in founding pricing.</p>
+      <form id="waitlistForm" onsubmit="submitWaitlist(event)">
+        <div class="field"><label>Full Name</label><input type="text" id="wl-name" placeholder="Jane Smith" required></div>
+        <div class="field"><label>Email Address</label><input type="email" id="wl-email" placeholder="jane@yourbar.com" required></div>
+        <div class="field"><label>Venue Type</label>
+          <select id="wl-venue" required>
+            <option value="" disabled selected>Select your venue type</option>
+            <option>Bar / Cocktail Lounge</option>
+            <option>Nightclub</option>
+            <option>Restaurant</option>
+            <option>Rooftop / Event Space</option>
+            <option>Hotel Bar</option>
+            <option>Multi-venue Group</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 8px;">Secure My Spot</button>
+      </form>
+    </div>
+  </div>
+  <div class="overlay" id="successOverlay" onclick="if(event.target===this) closeSuccess()">
+    <div class="modal-box success-box" style="text-align: center;">
+      <button class="modal-close" onclick="closeSuccess()">&times;</button>
+      <span class="success-icon">&#10003;</span>
+      <h3>You're in.</h3>
+      <p class="sub">Early access incoming. We'll reach out with your founding-member details as we approach launch. Welcome to the crew.</p>
+      <button class="btn-primary" onclick="closeSuccess()" style="width: 100%; justify-content: center; margin-top: 8px;">Back to Exploring</button>
+    </div>
+  </div>
+
+  <!-- FOOTER TEMPLATE - same as Index -->
+  <template id="footerTpl">
+    <!-- Paste exact footer content from Index.html here -->
+    <footer>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="footer-logo">COMPLIANCE<span>DADDY</span></span>
+          <p class="footer-tagline">Hospitality compliance, automated. Built by operators, for operators. Pre-launch Mobile, AL.</p>
+          <!-- socials etc. -->
+        </div>
+        <!-- other cols -->
+      </div>
+      <div class="footer-bottom">
+        <p>2026 ComplianceDaddy. All rights reserved.</p>
+        <p>Mobile, AL Pre-Launch</p>
+      </div>
+    </footer>
+  </template>
+
+  <script>
+    // Exact JS from Index.html: cursor, routing (adapt for standalone/about active), modals, footer injection, mobile nav, etc.
+    // Key functions:
+    function navigate(page) { /* ... full routing code ... */ }
+    function openWaitlist() { document.getElementById('waitlistOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeWaitlist() { document.getElementById('waitlistOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+    function closeSuccess() { document.getElementById('successOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+    function submitWaitlist(e) {
+      e.preventDefault();
+      const name = document.getElementById('wl-name').value;
+      const email = document.getElementById('wl-email').value;
+      const venue = document.getElementById('wl-venue').value;
+      window.location.href = `mailto:info@compliancedaddy.com?subject=Waitlist%20Signup:%20${encodeURIComponent(name)}&body=Name:%20${encodeURIComponent(name)}%0AEmail:%20${encodeURIComponent(email)}%0AVenue:%20${encodeURIComponent(venue)}`;
+      closeWaitlist();
+      document.getElementById('waitlistForm').reset();
+      setTimeout(() => document.getElementById('successOverlay').classList.add('open'), 400);
+    }
+    function toggleMobile() { /* ... */ }
+    function injectFooters() { /* ... */ }
+    // Cursor animation
+    const curDot = document.getElementById('cur-dot');
+    const curRing = document.getElementById('cur-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      curDot.style.left = mx + 'px';
+      curDot.style.top = my + 'px';
+    });
+    function animRing() {
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      curRing.style.left = rx + 'px';
+      curRing.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    }
+    document.addEventListener('mousedown', () => curRing.style.transform = 'translate(-50%, -50%) scale(0.75)');
+    document.addEventListener('mouseup', () => curRing.style.transform = 'translate(-50%, -50%) scale(1)');
+    requestAnimationFrame(animRing);
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      injectFooters();
+      // Set about active for standalone
+      setActiveNav('about');
+    });
+    // Paste full JS from Index for full compatibility (routing, etc.)
+  </script>
+</body>
+</html>
