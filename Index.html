@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComplianceDaddy — Hospitality Compliance, Automated</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS — Reino Studio palette
+══════════════════════════════════════════ */
+:root {
+  --bg:        #f4f1ec;
+  --bg2:       #eae6df;
+  --bg3:       #dedad3;
+  --ink:       #1c1b19;
+  --ink2:      #4a4845;
+  --ink3:      #8a8780;
+  --line:      #d8d4cd;
+  --line2:     #c4bfb8;
+
+  /* photography palette — CSS gradients replacing images */
+  --scene-bar:       linear-gradient(135deg,#1a0f05 0%,#2d1a08 30%,#0d0a06 70%,#1f1208 100%);
+  --scene-dining:    linear-gradient(160deg,#1c1208 0%,#3d2510 40%,#1a0e06 80%,#0d0805 100%);
+  --scene-night:     linear-gradient(145deg,#050308 0%,#120b1e 35%,#0d0a15 65%,#080510 100%);
+  --scene-kitchen:   linear-gradient(130deg,#0c0e10 0%,#1a2028 40%,#0e1218 75%,#090c10 100%);
+  --scene-cocktail:  linear-gradient(155deg,#0f0a05 0%,#251810 40%,#0a0705 75%,#180d06 100%);
+  --scene-outdoor:   linear-gradient(140deg,#080d08 0%,#142014 40%,#0b150b 75%,#060a06 100%);
+}
+
+/* ══════════════════════════════════════════
+   RESET
+══════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.65;
+  overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;
+}
+img,picture{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+/* ══════════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════════ */
+#cdot,#cring{
+  position:fixed;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);border-radius:50%;
+}
+#cdot{width:5px;height:5px;background:var(--ink)}
+#cring{
+  width:28px;height:28px;
+  border:1px solid rgba(28,27,25,0.3);
+  z-index:9998;transition:transform .15s ease,opacity .15s;
+}
+
+/* ══════════════════════════════════════════
+   PAGES
+══════════════════════════════════════════ */
+.page{display:none}
+.page.active{display:block;animation:pgIn .55s cubic-bezier(.4,0,.2,1) both}
+@keyframes pgIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:64px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 52px;
+  background:rgba(244,241,236,.95);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.1em;
+  color:var(--ink);cursor:pointer;
+}
+.nav-logo b{color:var(--ink3)}
+.nav-links{display:flex;align-items:center;gap:40px;list-style:none}
+.nav-links a{
+  font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink3);transition:color .2s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;
+  background:var(--ink);transform:scaleX(0);transform-origin:left;
+  transition:transform .25s ease;
+}
+.nav-links a:hover,.nav-links a.anav{color:var(--ink)}
+.nav-links a:hover::after,.nav-links a.anav::after{transform:scaleX(1)}
+.nav-cta{
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--ink);color:var(--bg);border:none;
+  padding:10px 22px;transition:background .2s,transform .2s;
+}
+.nav-cta:hover{background:#333;transform:translateY(-1px)}
+/* no underline on CTA */
+.nav-links li:last-child a::after{display:none}
+
+/* hamburger */
+.hbg{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:4px}
+.hbg span{display:block;width:22px;height:1.5px;background:var(--ink);transition:all .3s}
+.hbg.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hbg.open span:nth-child(2){opacity:0}
+.hbg.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mob-menu{
+  display:none;position:fixed;top:64px;left:0;right:0;z-index:999;
+  background:var(--bg);border-bottom:1px solid var(--line);
+  flex-direction:column;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{
+  font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);padding:18px 28px;border-bottom:1px solid var(--line);
+  transition:color .2s;
+}
+.mob-menu a:hover{color:var(--ink)}
+
+/* ══════════════════════════════════════════
+   SHARED COMPONENTS
+══════════════════════════════════════════ */
+.eyebrow{
+  font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink3);
+}
+.eyebrow-light{color:rgba(244,241,236,.5)}
+.serif{font-family:'DM Serif Display',serif}
+.serif-i{font-family:'DM Serif Display',serif;font-style:italic}
+.bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:.08em}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;border:none;
+  padding:15px 34px;transition:all .25s;cursor:pointer;
+}
+.btn-black{background:var(--ink);color:var(--bg)}
+.btn-black:hover{background:#333;transform:translateY(-1px)}
+.btn-white{background:var(--bg);color:var(--ink)}
+.btn-white:hover{background:var(--bg2);transform:translateY(-1px)}
+.btn-outline-dark{
+  background:transparent;color:var(--ink);
+  border:1px solid var(--line2);
+}
+.btn-outline-dark:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn-outline-light{
+  background:transparent;color:var(--bg);
+  border:1px solid rgba(244,241,236,.35);
+}
+.btn-outline-light:hover{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+
+/* forms */
+.f-field{margin-bottom:18px}
+.f-label{
+  display:block;font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:7px;
+}
+.f-input,.f-select,.f-textarea{
+  width:100%;background:var(--bg);border:1px solid var(--line);
+  color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;
+  padding:13px 16px;outline:none;transition:border-color .2s;
+  -webkit-appearance:none;border-radius:0;
+}
+.f-input:focus,.f-select:focus,.f-textarea:focus{border-color:var(--ink)}
+.f-textarea{resize:vertical;min-height:120px}
+/* dark variants for modals on light bg */
+.f-dark .f-input,.f-dark .f-select,.f-dark .f-textarea{
+  background:rgba(28,27,25,.04);border-color:var(--line);
+}
+
+/* ══════════════════════════════════════════
+   CSS SCENE PANELS — no external images
+══════════════════════════════════════════ */
+.scene{position:relative;overflow:hidden}
+.scene-fill{position:absolute;inset:0}
+/* bar */
+.s-bar .scene-fill{background:var(--scene-bar)}
+/* dining */
+.s-dining .scene-fill{background:var(--scene-dining)}
+/* night */
+.s-night .scene-fill{background:var(--scene-night)}
+/* kitchen */
+.s-kitchen .scene-fill{background:var(--scene-kitchen)}
+/* cocktail */
+.s-cocktail .scene-fill{background:var(--scene-cocktail)}
+/* outdoor */
+.s-outdoor .scene-fill{background:var(--scene-outdoor)}
+
+/* ambient glow overlays — give each scene a light source */
+.s-bar .scene-fill::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 70% 60%, rgba(220,140,40,.18) 0%, transparent 70%),
+             radial-gradient(ellipse 40% 30% at 30% 80%, rgba(180,80,20,.12) 0%, transparent 60%);
+}
+.s-dining .scene-fill::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 50% at 50% 40%, rgba(200,120,30,.2) 0%, transparent 65%),
+             radial-gradient(ellipse 30% 40% at 80% 70%, rgba(160,70,20,.1) 0%, transparent 60%);
+}
+.s-night .scene-fill::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 30%, rgba(80,40,140,.25) 0%, transparent 65%),
+             radial-gradient(ellipse 30% 30% at 80% 60%, rgba(160,40,80,.15) 0%, transparent 55%);
+}
+.s-kitchen .scene-fill::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 30%, rgba(180,200,220,.12) 0%, transparent 65%),
+             radial-gradient(ellipse 30% 30% at 20% 50%, rgba(200,210,220,.08) 0%, transparent 55%);
+}
+.s-cocktail .scene-fill::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 50% at 60% 50%, rgba(200,140,40,.2) 0%, transparent 65%),
+             radial-gradient(ellipse 25% 30% at 20% 70%, rgba(160,80,20,.12) 0%, transparent 55%);
+}
+.s-outdoor .scene-fill::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 30% 30%, rgba(60,120,60,.2) 0%, transparent 65%),
+             radial-gradient(ellipse 30% 30% at 70% 60%, rgba(40,80,40,.12) 0%, transparent 55%);
+}
+/* noise texture on all scenes for film grain */
+.scene-fill::before{
+  content:'';position:absolute;inset:0;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size:200px 200px;opacity:.5;pointer-events:none;
+}
+.scene-content{position:relative;z-index:2}
+
+/* text rendered ON dark scenes */
+.on-dark{color:var(--bg)}
+.on-dark .eyebrow{color:rgba(244,241,236,.5)}
+
+/* ══════════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════════ */
+.marquee-wrap{background:var(--ink);padding:13px 0;overflow:hidden;white-space:nowrap}
+.marquee-track{display:inline-flex;animation:marquee 28s linear infinite}
+.marquee-track span{
+  font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.2em;
+  color:rgba(244,241,236,.8);padding:0 28px;
+}
+.marquee-track .sep{padding:0;font-size:6px;opacity:.25;color:var(--bg)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════════════════
+   HOME — HERO
+══════════════════════════════════════════ */
+.hero{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:100vh;padding-top:64px;overflow:hidden;
+}
+.hero-l{
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:80px 56px 80px 52px;background:var(--bg);position:relative;z-index:2;
+}
+.hero-l h1{
+  font-family:'DM Serif Display',serif;font-size:82px;
+  line-height:.92;letter-spacing:-.03em;color:var(--ink);
+  margin:20px 0 36px;
+}
+.hero-l h1 em{font-style:italic;color:var(--ink3)}
+.hero-l p{font-size:17px;color:var(--ink2);max-width:400px;line-height:1.7;margin-bottom:44px}
+.hero-l .hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hero-r{
+  position:relative;min-height:480px;
+}
+.hero-r .scene-fill{
+  transition:transform 8s ease;
+}
+.hero-r::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,var(--bg) 0%,transparent 18%),
+             linear-gradient(0deg,var(--bg) 0%,transparent 20%);
+}
+/* overlay label on hero scene */
+.hero-label{
+  position:absolute;bottom:36px;right:36px;z-index:3;
+  font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(244,241,236,.45);
+}
+.scroll-hint{
+  position:absolute;bottom:36px;left:52px;z-index:3;
+  display:flex;align-items:center;gap:12px;
+  font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink3);cursor:pointer;
+}
+.scroll-hint::before{content:'';display:block;width:36px;height:1px;background:var(--ink)}
+
+/* ══════════════════════════════════════════
+   HOME — PHOTO GRID
+══════════════════════════════════════════ */
+.grid5{
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr;
+  grid-template-rows:400px 300px;
+  gap:3px;background:var(--line);
+}
+.g-item{position:relative;overflow:hidden;cursor:pointer}
+.g-item:first-child{grid-row:1/3}
+.g-item .scene-fill{transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.g-item:hover .scene-fill{transform:scale(1.04)}
+.g-item-label{
+  position:absolute;bottom:0;left:0;right:0;z-index:3;
+  padding:20px 24px;
+  background:linear-gradient(0deg,rgba(10,8,6,.7) 0%,transparent 100%);
+  font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(244,241,236,.7);
+  opacity:0;transition:opacity .35s;
+}
+.g-item:hover .g-item-label{opacity:1}
+
+/* ══════════════════════════════════════════
+   HOME — STATEMENT
+══════════════════════════════════════════ */
+.statement{
+  display:grid;grid-template-columns:1fr 1fr;
+  padding:120px 52px;gap:0;align-items:start;
+  border-bottom:1px solid var(--line);
+}
+.stmt-l h2{
+  font-family:'DM Serif Display',serif;font-size:68px;
+  line-height:.95;letter-spacing:-.02em;color:var(--ink);
+}
+.stmt-l h2 em{font-style:italic;color:var(--ink3)}
+.stmt-r{padding-left:72px;border-left:1px solid var(--line)}
+.stmt-r p{font-size:17px;color:var(--ink2);line-height:1.75;margin-bottom:24px}
+.stmt-r p:last-of-type{margin-bottom:40px}
+
+/* ══════════════════════════════════════════
+   HOME — FEATURE CARDS (horizontal scroll)
+══════════════════════════════════════════ */
+.features-hd{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:80px 52px 52px;
+}
+.features-hd h2{
+  font-family:'DM Serif Display',serif;font-size:52px;
+  letter-spacing:-.02em;color:var(--ink);
+}
+.feat-scroll{
+  display:flex;gap:3px;overflow-x:auto;padding:0 52px 80px;
+  scrollbar-width:none;background:var(--line);
+}
+.feat-scroll::-webkit-scrollbar{display:none}
+.fcard{
+  flex:0 0 360px;background:var(--bg);
+  border-right:1px solid var(--line);
+  overflow:hidden;
+}
+.fcard-img{height:200px;width:100%}
+.fcard-body{padding:32px 32px 36px}
+.fcard-num{
+  font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--line2);margin-bottom:20px;
+}
+.fcard h3{
+  font-family:'DM Serif Display',serif;font-size:24px;
+  color:var(--ink);margin-bottom:12px;
+}
+.fcard p{font-size:14px;color:var(--ink2);line-height:1.7}
+
+/* ══════════════════════════════════════════
+   HOME — SPLIT (pain / solution)
+══════════════════════════════════════════ */
+.split{display:grid;grid-template-columns:1fr 1fr;min-height:70vh}
+.split-l{
+  background:var(--ink);padding:80px 56px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  position:relative;overflow:hidden;
+}
+.split-l .scene-fill{opacity:.12;z-index:0}
+.split-l-content{position:relative;z-index:2}
+.split-l h2{
+  font-family:'DM Serif Display',serif;font-size:44px;
+  color:var(--bg);line-height:1.05;letter-spacing:-.01em;margin:20px 0 44px;
+}
+.split-r{
+  background:var(--bg2);padding:80px 56px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.split-r h2{
+  font-family:'DM Serif Display',serif;font-size:44px;
+  color:var(--ink);line-height:1.05;letter-spacing:-.01em;margin:20px 0 44px;
+}
+.s-row{
+  padding:22px 0;border-top:1px solid;
+  display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;
+}
+.s-row.dark-row{border-color:rgba(244,241,236,.1)}
+.s-row.light-row{border-color:var(--line)}
+.s-row:last-child{border-bottom:1px solid}
+.s-row.dark-row:last-child{border-color:rgba(244,241,236,.1)}
+.s-row.light-row:last-child{border-color:var(--line)}
+.s-num{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;
+  color:rgba(244,241,236,.25);line-height:1;padding-top:2px;
+  min-width:28px;
+}
+.s-num-dark{color:rgba(28,27,25,.2)}
+.s-row h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.s-row.dark-row h4{color:var(--bg)}
+.s-row.light-row h4{color:var(--ink)}
+.s-row p{font-size:13px;line-height:1.65}
+.s-row.dark-row p{color:rgba(244,241,236,.5)}
+.s-row.light-row p{color:var(--ink2)}
+
+/* ══════════════════════════════════════════
+   HOME — HOW IT WORKS
+══════════════════════════════════════════ */
+.how{padding:120px 52px;background:var(--bg);border-top:1px solid var(--line)}
+.how h2{
+  font-family:'DM Serif Display',serif;font-size:60px;
+  letter-spacing:-.02em;color:var(--ink);margin:16px 0 72px;
+}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+.how-step{background:var(--bg);padding:44px 32px;transition:background .25s}
+.how-step:hover{background:var(--bg2)}
+.step-n{
+  font-family:'Bebas Neue',sans-serif;font-size:52px;
+  color:var(--line2);line-height:1;margin-bottom:24px;
+}
+.how-step h3{
+  font-family:'DM Serif Display',serif;font-size:21px;
+  color:var(--ink);margin-bottom:10px;
+}
+.how-step p{font-size:14px;color:var(--ink2);line-height:1.65}
+.how-img{
+  height:320px;margin-top:3px;background:var(--line);
+  overflow:hidden;position:relative;
+}
+.how-img .scene-fill{transform:scale(1.05)}
+.how-img::after{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(90deg,var(--bg) 0%,transparent 10%,transparent 90%,var(--bg) 100%);
+}
+
+/* ══════════════════════════════════════════
+   HOME — FULL BLEED CTA
+══════════════════════════════════════════ */
+.fullbleed{
+  position:relative;min-height:540px;
+  display:flex;align-items:center;overflow:hidden;
+}
+.fullbleed .scene-fill{z-index:0}
+.fullbleed::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,rgba(10,8,6,.93) 0%,rgba(10,8,6,.65) 55%,rgba(10,8,6,.2) 100%);
+}
+.fullbleed-c{
+  position:relative;z-index:2;padding:0 52px;max-width:640px;
+}
+.fullbleed-c h2{
+  font-family:'DM Serif Display',serif;font-size:64px;
+  line-height:.95;letter-spacing:-.02em;color:var(--bg);margin:16px 0 20px;
+}
+.fullbleed-c h2 em{font-style:italic;color:rgba(244,241,236,.55)}
+.fullbleed-c p{font-size:17px;color:rgba(244,241,236,.6);margin-bottom:36px;line-height:1.65}
+
+/* ══════════════════════════════════════════
+   ABOUT PAGE
+══════════════════════════════════════════ */
+/* about hero */
+.about-hero{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:100vh;padding-top:64px;overflow:hidden;
+}
+.about-img{position:relative;min-height:480px}
+.about-img::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,transparent 65%,var(--bg) 100%),
+             linear-gradient(0deg,var(--bg) 0%,transparent 15%);
+}
+.about-txt{
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:80px 52px 80px 64px;background:var(--bg);
+}
+.about-txt h1{
+  font-family:'DM Serif Display',serif;font-size:58px;
+  line-height:1.0;letter-spacing:-.02em;color:var(--ink);margin:20px 0 28px;
+}
+.about-txt h1 em{font-style:italic;color:var(--ink3)}
+.about-txt p{font-size:17px;color:var(--ink2);max-width:400px;line-height:1.7;margin-bottom:36px}
+
+/* photo strip */
+.photo-strip{display:flex;gap:3px;height:380px;background:var(--line)}
+.ps-item{flex:1;overflow:hidden;position:relative}
+.ps-item .scene-fill{transition:transform .65s ease}
+.ps-item:hover .scene-fill{transform:scale(1.05)}
+
+/* founder section */
+.founder-sect{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--line);
+}
+.founder-img-col{
+  position:relative;min-height:500px;overflow:hidden;
+  background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+}
+.founder-placeholder{
+  width:200px;height:200px;border-radius:50%;
+  background:var(--line);border:3px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:64px;color:var(--ink3);font-family:'DM Serif Display',serif;
+}
+.founder-txt{padding:72px 52px;display:flex;flex-direction:column;justify-content:center}
+.founder-txt h2{
+  font-family:'DM Serif Display',serif;font-size:44px;
+  color:var(--ink);letter-spacing:-.02em;margin:16px 0 24px;
+}
+.founder-txt p{font-size:16px;color:var(--ink2);line-height:1.75;margin-bottom:20px}
+.founder-txt p:last-of-type{margin-bottom:36px}
+
+/* timeline */
+.timeline-sect{
+  padding:100px 0;border-top:1px solid var(--line);background:var(--bg2);
+}
+.tl-hd{padding:0 52px 64px;display:flex;gap:64px;align-items:flex-end}
+.tl-hd h2{
+  font-family:'DM Serif Display',serif;font-size:52px;
+  color:var(--ink);letter-spacing:-.02em;
+}
+.tl-track{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);margin:0 52px}
+.tl-item{background:var(--bg2);padding:44px 32px}
+.tl-item::before{
+  content:'';display:block;width:6px;height:6px;
+  border-radius:50%;background:var(--ink);margin-bottom:20px;
+}
+.tl-yr{
+  font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:10px;
+}
+.tl-item h4{
+  font-family:'DM Serif Display',serif;font-size:20px;
+  color:var(--ink);margin-bottom:10px;
+}
+.tl-item p{font-size:13px;color:var(--ink2);line-height:1.65}
+
+/* mission */
+.mission-sect{
+  padding:120px 52px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:160px 1fr;gap:64px;align-items:center;
+}
+.mission-label{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink3);
+}
+.mission-q{
+  font-family:'DM Serif Display',serif;font-size:44px;
+  color:var(--ink);line-height:1.1;letter-spacing:-.01em;
+}
+.mission-q em{font-style:italic;color:var(--ink3)}
+
+/* stats strip */
+.stats-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--line);background:var(--ink);
+}
+.stat-block{
+  padding:56px 48px;border-right:1px solid rgba(244,241,236,.1);
+}
+.stat-block:last-child{border-right:none}
+.stat-n{
+  font-family:'Bebas Neue',sans-serif;font-size:72px;
+  color:var(--bg);line-height:1;margin-bottom:8px;
+}
+.stat-l{
+  font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(244,241,236,.4);
+}
+
+/* about fullbleed cta */
+.about-cta{
+  position:relative;min-height:440px;
+  display:flex;align-items:center;overflow:hidden;
+}
+.about-cta .scene-fill{z-index:0}
+.about-cta::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,rgba(10,8,6,.92) 0%,rgba(10,8,6,.6) 55%,rgba(10,8,6,.15) 100%);
+}
+.about-cta-c{position:relative;z-index:2;padding:0 52px;max-width:600px}
+.about-cta-c h2{
+  font-family:'DM Serif Display',serif;font-size:52px;
+  color:var(--bg);line-height:.95;letter-spacing:-.02em;margin:16px 0 24px;
+}
+.about-cta-c h2 em{font-style:italic;color:rgba(244,241,236,.5)}
+.about-cta-c p{font-size:17px;color:rgba(244,241,236,.6);margin-bottom:32px}
+
+/* ══════════════════════════════════════════
+   PITCH PAGE
+══════════════════════════════════════════ */
+.pitch-gate{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding-top:64px;background:var(--bg);
+}
+.gate-box{
+  width:460px;max-width:90vw;border:1px solid var(--line);
+  padding:60px 52px;text-align:center;background:var(--bg);
+}
+.gate-icon{font-size:40px;margin-bottom:28px;display:block}
+.gate-box h2{
+  font-family:'DM Serif Display',serif;font-size:34px;
+  color:var(--ink);margin-bottom:10px;
+}
+.gate-box p{font-size:15px;color:var(--ink2);margin-bottom:28px;line-height:1.65}
+.gate-hint{
+  border:1px solid var(--line);background:var(--bg2);
+  padding:14px 18px;margin-top:16px;font-size:13px;color:var(--ink3);
+  line-height:1.5;
+}
+.gate-hint a{color:var(--ink);text-decoration:underline}
+#gateErr{color:#8a2828;font-size:13px;margin-top:10px;display:none}
+
+.deck{display:none;padding-top:64px;background:var(--bg)}
+.deck.show{display:block}
+.deck-top{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:72px 52px 56px;border-bottom:1px solid var(--line);
+}
+.deck-top h1{
+  font-family:'DM Serif Display',serif;font-size:64px;
+  letter-spacing:-.02em;color:var(--ink);
+}
+.deck-top h1 em{font-style:italic;color:var(--ink3)}
+.deck-top-r{text-align:right}
+.deck-top-r p{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px}
+.slides-wrap{padding:56px 52px}
+.slide{
+  display:none;min-height:480px;border:1px solid var(--line);
+  padding:64px 72px;position:relative;background:var(--bg);
+  animation:slIn .35s ease both;
+}
+.slide.on{display:flex;flex-direction:column;justify-content:center}
+@keyframes slIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+.sl-n{
+  position:absolute;top:28px;right:36px;
+  font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--line2);
+}
+.slide h2{
+  font-family:'DM Serif Display',serif;font-size:52px;
+  letter-spacing:-.02em;color:var(--ink);margin-bottom:24px;
+}
+.slide p{font-size:17px;color:var(--ink2);max-width:640px;line-height:1.7}
+.slide-stats{display:flex;gap:56px;margin-top:40px;flex-wrap:wrap}
+.ss-n{
+  font-family:'Bebas Neue',sans-serif;font-size:72px;
+  color:var(--ink);line-height:1;
+}
+.ss-l{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-top:4px}
+.sl-ctrl{display:flex;align-items:center;gap:14px;padding:0 52px 56px}
+.sl-btn{
+  width:42px;height:42px;border:1px solid var(--line);background:none;
+  color:var(--ink);font-size:15px;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.sl-btn:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sl-dots{display:flex;gap:7px}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--line2);cursor:pointer;transition:all .25s}
+.sdot.on{background:var(--ink);transform:scale(1.3)}
+
+/* ══════════════════════════════════════════
+   CONTACT PAGE
+══════════════════════════════════════════ */
+.contact-hero{
+  position:relative;min-height:52vh;display:flex;align-items:flex-end;
+  padding:140px 52px 72px;overflow:hidden;
+}
+.contact-hero .scene-fill{z-index:0}
+.contact-hero::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(0deg,rgba(10,8,6,.97) 0%,rgba(10,8,6,.55) 55%,rgba(10,8,6,.2) 100%);
+}
+.contact-hero-c{position:relative;z-index:2}
+.contact-hero-c h1{
+  font-family:'DM Serif Display',serif;font-size:76px;
+  line-height:.95;letter-spacing:-.02em;color:var(--bg);margin:14px 0 20px;
+}
+.contact-hero-c p{font-size:17px;color:rgba(244,241,236,.55);max-width:440px}
+.contact-body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.cf-col,.ci-col{background:var(--bg);padding:72px 52px}
+.cf-col h2,.ci-col h3{
+  font-family:'DM Serif Display',serif;color:var(--ink);margin-bottom:40px;
+}
+.cf-col h2{font-size:34px}
+.ci-col h3{font-size:28px}
+.info-row{padding:22px 0;border-bottom:1px solid var(--line)}
+.info-row:first-of-type{border-top:1px solid var(--line)}
+.ir-l{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.ir-v{font-size:15px;color:var(--ink)}
+.ir-v a{color:var(--ink);text-decoration:underline}
+.map-box{
+  margin-top:32px;height:220px;border:1px solid var(--line);
+  background:var(--bg2);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.map-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.map-pin{position:relative;z-index:1;text-align:center}
+.map-pin .pin{font-size:28px;display:block;margin-bottom:6px;animation:pinB 2.5s ease infinite}
+.map-pin span{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+@keyframes pinB{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.contact-socials{display:flex;gap:10px;margin-top:28px}
+.cs-link{
+  width:36px;height:36px;border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--ink2);
+  transition:all .2s;
+}
+.cs-link:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer{
+  border-top:1px solid var(--line);background:var(--bg2);
+  padding:64px 52px 44px;
+}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:56px;margin-bottom:56px}
+.ft-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.1em;
+  color:var(--ink);display:block;margin-bottom:14px;
+}
+.ft-logo b{color:var(--ink3)}
+.ft-tag{font-size:14px;color:var(--ink3);max-width:260px;line-height:1.65}
+.ft-col h5{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--line2);margin-bottom:20px}
+.ft-col ul{list-style:none}
+.ft-col li{margin-bottom:10px}
+.ft-col li a{font-size:14px;color:var(--ink2);transition:color .2s;cursor:pointer}
+.ft-col li a:hover{color:var(--ink)}
+.ft-col p{font-size:14px;color:var(--ink2);margin-bottom:6px}
+.ft-col a.mail{color:var(--ink);text-decoration:underline;font-size:14px}
+.ft-socials{display:flex;gap:10px;margin-top:20px}
+.ft-social{
+  width:34px;height:34px;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--ink3);transition:all .2s;
+}
+.ft-social:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ft-bot{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:36px;border-top:1px solid var(--line);
+}
+.ft-bot p{font-size:12px;color:var(--ink3)}
+
+/* ══════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════ */
+.overlay{
+  display:none;position:fixed;inset:0;z-index:2000;
+  background:rgba(28,27,25,.72);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+.overlay.open{display:flex}
+.modal{
+  background:var(--bg);border:1px solid var(--line);
+  padding:60px 52px;max-width:480px;width:90%;position:relative;
+  animation:mIn .3s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes mIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.modal-x{
+  position:absolute;top:18px;right:22px;background:none;border:none;
+  color:var(--ink3);font-size:20px;cursor:pointer;transition:color .2s;
+}
+.modal-x:hover{color:var(--ink)}
+.modal h3{font-family:'DM Serif Display',serif;font-size:34px;color:var(--ink);margin-bottom:6px}
+.modal .msub{font-size:14px;color:var(--ink2);margin-bottom:32px}
+.success-ico{font-size:36px;margin-bottom:18px;display:block}
+.success-modal{text-align:center}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media(max-width:900px){
+  nav{padding:0 24px}
+  .nav-links{display:none}
+  .hbg{display:flex}
+
+  /* home */
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-l{padding:100px 24px 56px}
+  .hero-l h1{font-size:48px}
+  .hero-r{height:300px}
+  .hero-r::after{background:linear-gradient(0deg,var(--bg) 0%,transparent 30%)}
+  .scroll-hint{left:24px}
+
+  .grid5{grid-template-columns:1fr 1fr;grid-template-rows:220px 220px}
+  .g-item:first-child{grid-row:auto}
+
+  .statement{grid-template-columns:1fr;padding:72px 24px}
+  .stmt-l h2{font-size:44px;margin-bottom:32px}
+  .stmt-r{padding-left:0;border-left:none;border-top:1px solid var(--line);padding-top:40px}
+
+  .features-hd{padding:56px 24px 40px;flex-direction:column;align-items:flex-start;gap:20px}
+  .features-hd h2{font-size:36px}
+  .feat-scroll{padding:0 24px 56px}
+  .fcard{flex:0 0 280px}
+
+  .split{grid-template-columns:1fr}
+  .split-l,.split-r{padding:64px 24px}
+
+  .how{padding:72px 24px}
+  .how h2{font-size:40px;margin-bottom:48px}
+  .how-grid{grid-template-columns:1fr 1fr}
+  .how-img{height:200px}
+
+  .fullbleed-c{padding:0 24px;max-width:100%}
+  .fullbleed-c h2{font-size:44px}
+
+  /* about */
+  .about-hero{grid-template-columns:1fr}
+  .about-img{height:300px}
+  .about-img::after{background:linear-gradient(0deg,var(--bg) 0%,transparent 40%)}
+  .about-txt{padding:48px 24px 64px}
+  .about-txt h1{font-size:44px}
+  .photo-strip{height:220px}
+  .founder-sect{grid-template-columns:1fr}
+  .founder-img-col{min-height:280px}
+  .founder-txt{padding:56px 24px}
+  .founder-txt h2{font-size:34px}
+  .tl-hd{padding:0 24px 48px;flex-direction:column;gap:20px}
+  .tl-hd h2{font-size:40px}
+  .tl-track{grid-template-columns:1fr 1fr;margin:0 24px}
+  .timeline-sect{padding:72px 0}
+  .mission-sect{padding:80px 24px;grid-template-columns:auto 1fr;gap:28px}
+  .mission-q{font-size:32px}
+  .stats-strip{grid-template-columns:1fr}
+  .stat-block{border-right:none;border-bottom:1px solid rgba(244,241,236,.1);padding:40px 24px}
+  .about-cta-c{padding:0 24px;max-width:100%}
+  .about-cta-c h2{font-size:40px}
+
+  /* pitch */
+  .deck-top{padding:48px 24px 40px;flex-direction:column;gap:28px;align-items:flex-start}
+  .deck-top h1{font-size:44px}
+  .slides-wrap{padding:40px 24px}
+  .slide{padding:48px 24px}
+  .slide h2{font-size:36px}
+  .sl-ctrl{padding:0 24px 48px}
+
+  /* contact */
+  .contact-hero{padding:110px 24px 56px}
+  .contact-hero-c h1{font-size:48px}
+  .contact-body{grid-template-columns:1fr}
+  .cf-col,.ci-col{padding:56px 24px}
+
+  /* footer */
+  footer{padding:56px 24px 36px}
+  .ft-top{grid-template-columns:1fr;gap:36px}
+  .ft-bot{flex-direction:column;gap:10px;text-align:center}
+}
+@media(max-width:480px){
+  .hero-l h1{font-size:38px}
+  .how-grid{grid-template-columns:1fr}
+  .tl-track{grid-template-columns:1fr}
+  .slide-stats{flex-direction:column;gap:28px}
+  .mission-sect{grid-template-columns:1fr}
+  .mission-label{writing-mode:horizontal-tb;transform:none;margin-bottom:12px}
+}
+</style>
+</head>
+<body>
+
+<div id="cdot"></div>
+<div id="cring"></div>
+
+<!-- ════ NAVIGATION ════ -->
+<nav id="mainnav">
+  <div class="nav-logo" onclick="go('home')">COMPLIANCE<b>DADDY</b></div>
+  <ul class="nav-links">
+    <li><a id="nl-home" onclick="go('home')">Home</a></li>
+    <li><a id="nl-about" onclick="go('about')">About</a></li>
+    <li><a id="nl-contact" onclick="go('contact')">Contact</a></li>
+    <li><button class="nav-cta" onclick="openWL()">Join Waitlist</button></li>
+  </ul>
+  <button class="hbg" id="hbg" onclick="toggleMob()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <a onclick="go('home')">Home</a>
+  <a onclick="go('about')">About</a>
+  <a onclick="go('contact')">Contact</a>
+  <a onclick="openWL();closeMob()" style="color:var(--ink);font-weight:700">Join Waitlist →</a>
+</div>
+
+<!-- ════════════════════════════════════
+     HOME
+════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-l">
+      <div class="eyebrow">Pre-Launch · Early Access</div>
+      <h1>The smarter way to keep your venue <em>compliant.</em></h1>
+      <p>Hospitality compliance, automated. Audits, checklists, and reports—all in one platform. No clipboards. No chaos. No fines.</p>
+      <div class="hero-btns">
+        <button class="btn btn-black" onclick="openWL()">Join Waitlist</button>
+        <button class="btn btn-outline-dark" onclick="go('about')">Our Story</button>
+      </div>
+    </div>
+    <div class="hero-r scene s-bar">
+      <div class="scene-fill"></div>
+      <div class="hero-label">BAR & LOUNGE COMPLIANCE</div>
+    </div>
+    <div class="scroll-hint" onclick="document.getElementById('marquee-home').scrollIntoView({behavior:'smooth'})">
+      Scroll
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap" id="marquee-home">
+    <div class="marquee-track">
+      <span>Digital Audits</span><span class="sep">◆</span>
+      <span>AI Checklists</span><span class="sep">◆</span>
+      <span>Automated Reports</span><span class="sep">◆</span>
+      <span>Permit Tracking</span><span class="sep">◆</span>
+      <span>Violation Prevention</span><span class="sep">◆</span>
+      <span>Hospitality Compliance</span><span class="sep">◆</span>
+      <span>Real-Time Alerts</span><span class="sep">◆</span>
+      <span>Audit-Ready 365</span><span class="sep">◆</span>
+      <span>Digital Audits</span><span class="sep">◆</span>
+      <span>AI Checklists</span><span class="sep">◆</span>
+      <span>Automated Reports</span><span class="sep">◆</span>
+      <span>Permit Tracking</span><span class="sep">◆</span>
+      <span>Violation Prevention</span><span class="sep">◆</span>
+      <span>Hospitality Compliance</span><span class="sep">◆</span>
+      <span>Real-Time Alerts</span><span class="sep">◆</span>
+      <span>Audit-Ready 365</span><span class="sep">◆</span>
+    </div>
+  </div>
+
+  <!-- PHOTO GRID -->
+  <div class="grid5">
+    <div class="g-item scene s-bar">
+      <div class="scene-fill"></div>
+      <div class="g-item-label">Bar &amp; Lounge</div>
+    </div>
+    <div class="g-item scene s-dining">
+      <div class="scene-fill"></div>
+      <div class="g-item-label">Fine Dining</div>
+    </div>
+    <div class="g-item scene s-night">
+      <div class="scene-fill"></div>
+      <div class="g-item-label">Nightclub</div>
+    </div>
+    <div class="g-item scene s-kitchen">
+      <div class="scene-fill"></div>
+      <div class="g-item-label">Commercial Kitchen</div>
+    </div>
+    <div class="g-item scene s-cocktail">
+      <div class="scene-fill"></div>
+      <div class="g-item-label">Cocktail Bar</div>
+    </div>
+  </div>
+
+  <!-- STATEMENT -->
+  <section class="statement">
+    <div class="stmt-l">
+      <div class="eyebrow" style="margin-bottom:20px">What is ComplianceDaddy?</div>
+      <h2>We built the compliance platform operators <em>actually</em> deserve.</h2>
+    </div>
+    <div class="stmt-r">
+      <p>750,000+ licensed hospitality venues in the US navigate an average of 23 distinct compliance domains. Most rely on binders, spreadsheets, and institutional memory. A single missed permit can cost everything.</p>
+      <p>ComplianceDaddy replaces paper-based compliance workflows with intelligent digital audits, AI-driven checklists, and automated reporting—purpose-built for bars, restaurants, nightclubs, and hotels.</p>
+      <div style="width:40px;height:1px;background:var(--line2);margin-bottom:28px"></div>
+      <p style="font-size:15px;color:var(--ink3)">From liquor board compliance to health code audits, fire inspections to employment law—one platform covers it all. Pre-launch. Join the waitlist for founding access.</p>
+      <button class="btn btn-black" onclick="openWL()" style="margin-top:36px">Secure Your Spot →</button>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <div style="border-top:1px solid var(--line)">
+    <div class="features-hd">
+      <div>
+        <div class="eyebrow" style="margin-bottom:14px">Platform Features</div>
+        <h2>Built for venues<br>that can't afford<br>to get it wrong.</h2>
+      </div>
+      <button class="btn btn-outline-dark" onclick="openWL()">Join Waitlist</button>
+    </div>
+    <div class="feat-scroll">
+      <div class="fcard">
+        <div class="fcard-img scene s-bar"><div class="scene-fill"></div></div>
+        <div class="fcard-body">
+          <div class="fcard-num">01 — DIGITAL AUDITS</div>
+          <h3>Scan Once. Know Everything.</h3>
+          <p>Replace paper checklists with intelligent digital audits. Generate instant compliance snapshots across all regulatory domains with a single scan.</p>
+        </div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-img scene s-night"><div class="scene-fill"></div></div>
+        <div class="fcard-body">
+          <div class="fcard-num">02 — AI CHECKLISTS</div>
+          <h3>AI That Flags Issues Before Inspectors Do.</h3>
+          <p>Context-aware checklists that adapt to your venue type, jurisdiction, and license class. Our AI catches what humans miss—every time.</p>
+        </div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-img scene s-kitchen"><div class="scene-fill"></div></div>
+        <div class="fcard-body">
+          <div class="fcard-num">03 — AUTO REPORTS</div>
+          <h3>Board-Ready in Seconds.</h3>
+          <p>Formatted compliance reports in one click. Share with stakeholders, attorneys, or regulators—citation-ready and audit-trail backed.</p>
+        </div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-img scene s-dining"><div class="scene-fill"></div></div>
+        <div class="fcard-body">
+          <div class="fcard-num">04 — PERMIT TRACKING</div>
+          <h3>Never Miss an Expiration Date.</h3>
+          <p>Know about permit expirations 30, 60, 90 days out. Our system watches your compliance calendar so your license stays current.</p>
+        </div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-img scene s-cocktail"><div class="scene-fill"></div></div>
+        <div class="fcard-body">
+          <div class="fcard-num">05 — TEAM WORKFLOWS</div>
+          <h3>Ops That Run Themselves.</h3>
+          <p>Automated workflows route tasks to the right person at the right time. Accountability built in. Exceptions surfaced instantly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLIT: PAIN vs SOLUTION -->
+  <section class="split">
+    <div class="split-l">
+      <div class="scene-fill" style="background:var(--scene-kitchen)"></div>
+      <div class="split-l-content">
+        <div class="eyebrow eyebrow-light">The Old Way</div>
+        <h2>Paper trails. Missed permits. Costly fines.</h2>
+        <div class="s-row dark-row">
+          <div class="s-num">01</div>
+          <div>
+            <h4>Paper Trail Chaos</h4>
+            <p>Binders, folders, sticky notes scattered across spreadsheets and filing cabinets—impossible to audit quickly when regulators show up.</p>
+          </div>
+        </div>
+        <div class="s-row dark-row">
+          <div class="s-num">02</div>
+          <div>
+            <h4>Costly Violations</h4>
+            <p>A single missed inspection or expired permit means fines, license suspension, or forced closure. The stakes are too high for guesswork.</p>
+          </div>
+        </div>
+        <div class="s-row dark-row">
+          <div class="s-num">03</div>
+          <div>
+            <h4>Manager Overload</h4>
+            <p>Compliance shouldn't consume 20% of your ops manager's week. Manual tracking steals time from guests and revenue.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="split-r">
+      <div class="eyebrow">The ComplianceDaddy Way</div>
+      <h2>One platform. Total visibility. Zero surprises.</h2>
+      <div class="s-row light-row">
+        <div class="s-num s-num-dark">01</div>
+        <div>
+          <h4>Single Source of Truth</h4>
+          <p>Every audit, checklist, and report lives in one platform—searchable, timestamped, and export-ready at a moment's notice.</p>
+        </div>
+      </div>
+      <div class="s-row light-row">
+        <div class="s-num s-num-dark">02</div>
+        <div>
+          <h4>Proactive Alerts</h4>
+          <p>Know about permit expirations weeks in advance. Our system watches your compliance calendar around the clock.</p>
+        </div>
+      </div>
+      <div class="s-row light-row">
+        <div class="s-num s-num-dark">03</div>
+        <div>
+          <h4>Ops That Scale</h4>
+          <p>Automated workflows route tasks to the right person. Accountability is built in. Nothing falls through the cracks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how">
+    <div class="eyebrow" style="margin-bottom:14px">How It Works</div>
+    <h2>Compliance on autopilot<br>in four steps.</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-n">01</div>
+        <h3>Scan Your Venue</h3>
+        <p>Onboard in minutes. Input your venue type, licenses, and jurisdiction. We build your complete compliance profile automatically.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-n">02</div>
+        <h3>Auto-Audit</h3>
+        <p>Our AI runs continuous checks against your profile—matching regulations, flagging gaps, and scoring your readiness in real time.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-n">03</div>
+        <h3>Generate Reports</h3>
+        <p>One click. Formatted compliance reports ready for regulators, investors, or internal review. Always backed by full audit trail.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-n">04</div>
+        <h3>Stay Ahead</h3>
+        <p>Proactive alerts, scheduled re-audits, and team task flows keep your venue perpetually compliant—not just inspection-ready.</p>
+      </div>
+    </div>
+    <div class="how-img scene s-dining">
+      <div class="scene-fill"></div>
+    </div>
+  </section>
+
+  <!-- FULL BLEED CTA -->
+  <section class="fullbleed scene s-bar">
+    <div class="scene-fill"></div>
+    <div class="fullbleed-c">
+      <div class="eyebrow eyebrow-light" style="margin-bottom:14px">Early Access · Limited Spots</div>
+      <h2>Ready to ditch<br>the <em>clipboard?</em></h2>
+      <p>Join hospitality operators getting early access to the platform that puts compliance on autopilot. Founding-member pricing locked at signup.</p>
+      <button class="btn btn-white" onclick="openWL()">Join the Waitlist — Free</button>
+    </div>
+  </section>
+
+  <div id="ft-home"></div>
+</div><!-- end home -->
+
+<!-- ════════════════════════════════════
+     ABOUT
+════════════════════════════════════ -->
+<div id="page-about" class="page">
+
+  <!-- HERO -->
+  <section class="about-hero">
+    <div class="about-img scene s-dining">
+      <div class="scene-fill"></div>
+    </div>
+    <div class="about-txt">
+      <div class="eyebrow">Our Story</div>
+      <h1>We've lived<br>hospitality chaos.<br>Now we're<br><em>automating it.</em></h1>
+      <p>Born from years of running late-night venues, navigating liquor board inspections at 2am, and drowning in binders—ComplianceDaddy is built by operators, for operators.</p>
+      <button class="btn btn-black" onclick="openWL()">Get Early Access</button>
+    </div>
+  </section>
+
+  <!-- PHOTO STRIP -->
+  <div class="photo-strip">
+    <div class="ps-item scene s-kitchen"><div class="scene-fill"></div></div>
+    <div class="ps-item scene s-bar"><div class="scene-fill"></div></div>
+    <div class="ps-item scene s-dining"><div class="scene-fill"></div></div>
+    <div class="ps-item scene s-night"><div class="scene-fill"></div></div>
+  </div>
+
+  <!-- FOUNDER -->
+  <section class="founder-sect">
+    <div class="founder-img-col">
+      <div class="founder-placeholder">👤</div>
+    </div>
+    <div class="founder-txt">
+      <div class="eyebrow" style="margin-bottom:16px">The Founder</div>
+      <h2>Built from the inside of the industry.</h2>
+      <p>Our founder spent 10+ years operating bars, nightclubs, and late-night venues across the Gulf Coast. The company was born after a $12,000 liquor board fine caused by a documentation error—a mistake that a proper system would have prevented entirely.</p>
+      <p>After 50+ interviews with bar owners, restaurant GMs, and nightclub operators confirming the same universal pain, the decision was made: this company had to exist. ComplianceDaddy is the tool we wish we'd had.</p>
+      <button class="btn btn-black" onclick="openWL()">Join the Waitlist</button>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="timeline-sect">
+    <div class="tl-hd">
+      <div>
+        <div class="eyebrow" style="margin-bottom:14px">Our Journey</div>
+        <h2>How we got here.</h2>
+      </div>
+      <p style="max-width:280px;font-size:15px;color:var(--ink2);line-height:1.65">From a $12,000 fine to a full platform—ComplianceDaddy is the company that had to exist.</p>
+    </div>
+    <div class="tl-track">
+      <div class="tl-item">
+        <div class="tl-yr">2024</div>
+        <h4>The Problem</h4>
+        <p>Founder survives a $12,000 liquor board fine from a documentation error. Decides the industry needs a better tool.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-yr">Early 2025</div>
+        <h4>The Idea</h4>
+        <p>50+ interviews with bar owners, nightclub operators, and restaurant GMs. Universal pain confirmed. ComplianceDaddy is born.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-yr">Late 2025</div>
+        <h4>Building MVP</h4>
+        <p>Core audit engine, checklist AI, and reporting module developed. Beta partners onboarded in Mobile, AL and New Orleans.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-yr">2026 →</div>
+        <h4>Launch</h4>
+        <p>Full platform launch across the Gulf Coast, with national expansion roadmap locked and investor deck live.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="mission-sect">
+    <div class="mission-label">Our Mission</div>
+    <div>
+      <div class="eyebrow" style="margin-bottom:24px">What drives us</div>
+      <p class="mission-q">"ComplianceDaddy: <em>precision for pros who can't afford mistakes.</em> We believe compliance infrastructure should be as sophisticated as the venues it protects."</p>
+      <button class="btn btn-black" onclick="openWL()" style="margin-top:44px">Join the Waitlist</button>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat-block">
+      <div class="stat-n">340+</div>
+      <div class="stat-l">Waitlist Signups</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-n">8</div>
+      <div class="stat-l">Beta Partners Onboarded</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-n">$0</div>
+      <div class="stat-l">CAC to date — 100% organic</div>
+    </div>
+  </div>
+
+  <!-- ABOUT CTA -->
+  <section class="about-cta scene s-cocktail">
+    <div class="scene-fill"></div>
+    <div class="about-cta-c">
+      <div class="eyebrow eyebrow-light" style="margin-bottom:14px">Early Access</div>
+      <h2>Be first.<br>Founding <em>pricing</em><br>locked at signup.</h2>
+      <p style="font-size:17px;color:rgba(244,241,236,.6);margin-bottom:32px">Join operators getting founding access before we go public.</p>
+      <button class="btn btn-white" onclick="openWL()">Secure My Spot →</button>
+    </div>
+  </section>
+
+  <div id="ft-about"></div>
+</div><!-- end about -->
+
+<!-- ════════════════════════════════════
+     PITCH
+════════════════════════════════════ -->
+<div id="page-pitch" class="page">
+
+  <!-- GATE -->
+  <div class="pitch-gate" id="pitchGate">
+    <div class="gate-box">
+      <span class="gate-icon">🔒</span>
+      <h2>Investor Pitch Deck</h2>
+      <p>Restricted to authorized investors and partners. Enter your access code or use the private link shared by ComplianceDaddy.</p>
+      <div class="f-field">
+        <label class="f-label">Access Code</label>
+        <input class="f-input" type="password" id="gateInput" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkCode()">
+      </div>
+      <button class="btn btn-black" style="width:100%;justify-content:center" onclick="checkCode()">Unlock Deck →</button>
+      <p id="gateErr">Invalid code. Contact info@compliancedaddy.com for access.</p>
+      <div class="gate-hint">Access is granted by ComplianceDaddy directly. <a href="mailto:info@compliancedaddy.com">Email us</a> to request investor access.</div>
+    </div>
+  </div>
+
+  <!-- DECK -->
+  <div class="deck" id="pitchDeck">
+    <div class="deck-top">
+      <div>
+        <div class="eyebrow" style="margin-bottom:14px">Investor Materials — Confidential</div>
+        <h1>Compliance<em>Daddy</em><br>Pitch Deck</h1>
+      </div>
+      <div class="deck-top-r">
+        <p>2026 Pre-Seed Round</p>
+        <button class="btn btn-black" onclick="alert('PDF download — connect to file for deployment')">⬇ Download PDF</button>
+      </div>
+    </div>
+
+    <div class="slides-wrap">
+      <div class="slide on" id="sl1">
+        <div class="sl-n">01 / 10</div>
+        <h2>ComplianceDaddy</h2>
+        <p>The AI-powered compliance operations platform purpose-built for the hospitality industry. Audits, checklists, and reports—automated.</p>
+        <div class="slide-stats">
+          <div><div class="ss-n">2026</div><div class="ss-l">Pre-Seed Round</div></div>
+          <div><div class="ss-n">$750K</div><div class="ss-l">Target Raise</div></div>
+        </div>
+      </div>
+      <div class="slide" id="sl2">
+        <div class="sl-n">02 / 10</div>
+        <h2>The Problem</h2>
+        <p>750,000+ licensed hospitality venues in the US navigate an average of 23 compliance domains. 67% rely on paper-based systems. Violations cost the industry $4.8B annually in fines, closures, and legal fees.</p>
+        <div class="slide-stats">
+          <div><div class="ss-n">$4.8B</div><div class="ss-l">Annual violation costs — US hospitality</div></div>
+          <div><div class="ss-n">67%</div><div class="ss-l">Venues on paper-based systems</div></div>
+        </div>
+      </div>
+      <div class="slide" id="sl3">
+        <div class="sl-n">03 / 10</div>
+        <h2>Market Size</h2>
+        <div class="slide-stats">
+          <div><div class="ss-n">$2.1B</div><div class="ss-l">TAM — Hospitality Compliance SaaS</div></div>
+          <div><div class="ss-n">$380M</div><div class="ss-l">SAM — Mid-market venues US</div></div>
+          <div><div class="ss-n">$45M</div><div class="ss-l">SOM — Year 1–3 Target</div></div>
+        </div>
+      </div>
+      <div class="slide" id="sl4">
+        <div class="sl-n">04 / 10</div>
+        <h2>Our Solution</h2>
+        <p>ComplianceDaddy replaces paper-based workflows with an AI-driven platform: smart audits that adapt to venue type, AI checklists trained on 10,000+ regulatory documents, and one-click reports that keep venues inspection-ready 365 days a year.</p>
+      </div>
+      <div class="slide" id="sl5">
+        <div class="sl-n">05 / 10</div>
+        <h2>Product</h2>
+        <p>Three core modules: the Audit Engine scans your venue profile against live regulatory data. The Checklist AI generates adaptive task lists by domain. The Report Builder outputs citation-ready documents in one click. All connected, all real-time, all in one dashboard.</p>
+      </div>
+      <div class="slide" id="sl6">
+        <div class="sl-n">06 / 10</div>
+        <h2>Business Model</h2>
+        <p>SaaS subscription with usage-based tiers. Starter at $149/mo covers 1–3 venues. Pro at $499/mo covers unlimited venues with API access and white-label reporting. Enterprise custom pricing for hotel groups and multi-venue operators.</p>
+      </div>
+      <div class="slide" id="sl7">
+        <div class="sl-n">07 / 10</div>
+        <h2>Traction</h2>
+        <div class="slide-stats">
+          <div><div class="ss-n">340+</div><div class="ss-l">Waitlist signups</div></div>
+          <div><div class="ss-n">8</div><div class="ss-l">Beta partners</div></div>
+          <div><div class="ss-n">$0</div><div class="ss-l">CAC to date (organic)</div></div>
+        </div>
+      </div>
+      <div class="slide" id="sl8">
+        <div class="sl-n">08 / 10</div>
+        <h2>Competitive Edge</h2>
+        <p>Current "solutions": spreadsheets, legacy GRC tools built for enterprise finance, or nothing at all. No purpose-built compliance platform exists for the independent hospitality venue operator. ComplianceDaddy is first-to-market at this price point and vertical focus.</p>
+      </div>
+      <div class="slide" id="sl9">
+        <div class="sl-n">09 / 10</div>
+        <h2>The Team</h2>
+        <p>Founder/CEO: 10+ years hospitality operations. CTO: ML engineer, ex-Amazon. Head of Compliance: Former ALDOC regulator with 15 years enforcement experience. Advisors include two multi-venue group operators and a hospitality attorney.</p>
+      </div>
+      <div class="slide" id="sl10">
+        <div class="sl-n">10 / 10</div>
+        <h2>The Ask</h2>
+        <div class="slide-stats">
+          <div><div class="ss-n">$750K</div><div class="ss-l">Pre-Seed Round</div></div>
+          <div><div class="ss-n">18mo</div><div class="ss-l">Runway</div></div>
+          <div><div class="ss-n">500</div><div class="ss-l">Target paying venues by EOY 2026</div></div>
+        </div>
+        <a href="mailto:info@compliancedaddy.com" class="btn btn-black" style="margin-top:36px">Get in Touch →</a>
+      </div>
+    </div>
+
+    <div class="sl-ctrl">
+      <button class="sl-btn" onclick="prevSl()">←</button>
+      <div class="sl-dots" id="slDots"></div>
+      <button class="sl-btn" onclick="nextSl()">→</button>
+    </div>
+  </div>
+
+  <div id="ft-pitch"></div>
+</div><!-- end pitch -->
+
+<!-- ════════════════════════════════════
+     CONTACT
+════════════════════════════════════ -->
+<div id="page-contact" class="page">
+
+  <!-- HERO -->
+  <section class="contact-hero scene s-night">
+    <div class="scene-fill"></div>
+    <div class="contact-hero-c">
+      <div class="eyebrow eyebrow-light">Get In Touch</div>
+      <h1>Let's talk<br>compliance.</h1>
+      <p>Questions, partnerships, or press. Based in Mobile, AL. We respond within 24 hours.</p>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <div class="contact-body">
+    <div class="cf-col">
+      <h2>Send a message.</h2>
+      <form onsubmit="submitContact(event)">
+        <div class="f-field">
+          <label class="f-label">Full Name</label>
+          <input class="f-input" type="text" name="name" placeholder="Jane Smith" required>
+        </div>
+        <div class="f-field">
+          <label class="f-label">Email Address</label>
+          <input class="f-input" type="email" name="email" placeholder="jane@yourbar.com" required>
+        </div>
+        <div class="f-field">
+          <label class="f-label">Venue Type</label>
+          <select class="f-select" name="venue_type" required>
+            <option value="" disabled selected>Select venue type</option>
+            <option>Bar / Cocktail Lounge</option>
+            <option>Nightclub</option>
+            <option>Restaurant</option>
+            <option>Rooftop / Event Space</option>
+            <option>Hotel Bar</option>
+            <option>Multi-venue Group</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="f-field">
+          <label class="f-label">Message</label>
+          <textarea class="f-textarea" name="message" placeholder="Tell us about your compliance challenges..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-black" style="width:100%;justify-content:center">Send Message →</button>
+      </form>
+    </div>
+    <div class="ci-col">
+      <h3>Find us.</h3>
+      <div class="info-row">
+        <div class="ir-l">Email</div>
+        <div class="ir-v"><a href="mailto:info@compliancedaddy.com">info@compliancedaddy.com</a></div>
+      </div>
+      <div class="info-row">
+        <div class="ir-l">Location</div>
+        <div class="ir-v">Mobile, Alabama, USA</div>
+      </div>
+      <div class="info-row">
+        <div class="ir-l">Phone</div>
+        <div class="ir-v">+1 (251) 000-0000</div>
+      </div>
+      <div class="info-row">
+        <div class="ir-l">Hours</div>
+        <div class="ir-v">Mon–Fri, 9am–6pm CT</div>
+      </div>
+      <div class="map-box">
+        <div class="map-grid"></div>
+        <div class="map-pin">
+          <span class="pin">📍</span>
+          <span>Mobile, Alabama</span>
+        </div>
+      </div>
+      <div class="contact-socials" style="margin-top:28px">
+        <a href="https://linkedin.com" target="_blank" class="cs-link" title="LinkedIn">in</a>
+        <a href="https://twitter.com" target="_blank" class="cs-link" title="X / Twitter">𝕏</a>
+        <a href="https://instagram.com" target="_blank" class="cs-link" title="Instagram">ig</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="ft-contact"></div>
+</div><!-- end contact -->
+
+<!-- ════ FOOTER TEMPLATE ════ -->
+<template id="ftTpl">
+  <footer>
+    <div class="ft-top">
+      <div>
+        <span class="ft-logo">COMPLIANCE<b>DADDY</b></span>
+        <p class="ft-tag">Hospitality compliance, automated. Built by operators, for operators. Pre-launch — Mobile, AL.</p>
+        <div class="ft-socials" style="margin-top:20px">
+          <a href="https://linkedin.com" target="_blank" class="ft-social">in</a>
+          <a href="#" class="ft-social">𝕏</a>
+          <a href="#" class="ft-social">ig</a>
+        </div>
+      </div>
+      <div class="ft-col">
+        <h5>Navigation</h5>
+        <ul>
+          <li><a onclick="go('home')">Home</a></li>
+          <li><a onclick="go('about')">About</a></li>
+          <li><a onclick="go('contact')">Contact</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h5>Contact</h5>
+        <p>📍 Mobile, Alabama</p>
+        <a class="mail" href="mailto:info@compliancedaddy.com">info@compliancedaddy.com</a>
+        <p style="margin-top:8px">Mon–Fri, 9am–6pm CT</p>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <p>© 2026 ComplianceDaddy. All rights reserved.</p>
+      <p>Mobile, AL · Pre-Launch · Built for operators.</p>
+    </div>
+  </footer>
+</template>
+
+<!-- ════ WAITLIST MODAL ════ -->
+<div class="overlay" id="wlOverlay" onclick="if(event.target===this)closeWL()">
+  <div class="modal">
+    <button class="modal-x" onclick="closeWL()">✕</button>
+    <h3>Join the Waitlist</h3>
+    <p class="msub">Early access for operators who move first. Lock in founding pricing today.</p>
+    <form onsubmit="submitWL(event)">
+      <div class="f-field">
+        <label class="f-label">Full Name</label>
+        <input class="f-input" id="wlName" type="text" placeholder="Jane Smith" required>
+      </div>
+      <div class="f-field">
+        <label class="f-label">Email Address</label>
+        <input class="f-input" id="wlEmail" type="email" placeholder="jane@yourbar.com" required>
+      </div>
+      <div class="f-field">
+        <label class="f-label">Venue Type</label>
+        <select class="f-select" id="wlVenue" required>
+          <option value="" disabled selected>Select your venue type</option>
+          <option>Bar / Cocktail Lounge</option>
+          <option>Nightclub</option>
+          <option>Restaurant</option>
+          <option>Rooftop / Event Space</option>
+          <option>Hotel Bar</option>
+          <option>Multi-venue Group</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-black" style="width:100%;justify-content:center;margin-top:8px">Secure My Spot →</button>
+    </form>
+  </div>
+</div>
+
+<!-- ════ SUCCESS MODAL ════ -->
+<div class="overlay" id="okOverlay" onclick="if(event.target===this)closeOK()">
+  <div class="modal success-modal">
+    <button class="modal-x" onclick="closeOK()">✕</button>
+    <span class="success-ico">✓</span>
+    <h3>You're in.</h3>
+    <p class="msub">Early access incoming. We'll reach out with founding-member details as we approach launch. Welcome to the crew.</p>
+    <button class="btn btn-black" onclick="closeOK()" style="width:100%;justify-content:center;margin-top:16px">Back to Exploring</button>
+  </div>
+</div>
+
+<script>
+/* ── CURSOR ── */
+const cdot=document.getElementById('cdot'),cring=document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cdot.style.left=mx+'px';cdot.style.top=my+'px';
+});
+(function animR(){
+  rx+=(mx-rx)*.14;ry+=(my-ry)*.14;
+  cring.style.left=rx+'px';cring.style.top=ry+'px';
+  requestAnimationFrame(animR);
+})();
+document.addEventListener('mousedown',()=>cring.style.transform='translate(-50%,-50%) scale(.7)');
+document.addEventListener('mouseup',()=>cring.style.transform='translate(-50%,-50%) scale(1)');
+
+/* ── ROUTING ── */
+const PAGES=['home','about','pitch','contact'];
+const CODE='CD2026';
+let curPage='home';
+
+function go(p){
+  if(!PAGES.includes(p))p='home';
+  PAGES.forEach(id=>{
+    const el=document.getElementById('page-'+id);
+    if(el)el.classList.remove('active');
+  });
+  const t=document.getElementById('page-'+p);
+  if(t)t.classList.add('active');
+  window.scrollTo(0,0);
+  curPage=p;
+  try{history.pushState({p},'','#'+p)}catch(e){}
+  setNav(p);
+  injectFooters();
+  closeMob();
+}
+
+function setNav(p){
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('anav'));
+  const map={home:'nl-home',about:'nl-about',contact:'nl-contact'};
+  if(map[p]){const el=document.getElementById(map[p]);if(el)el.classList.add('anav');}
+}
+
+window.addEventListener('popstate',()=>{
+  const h=location.hash.replace('#','');
+  if(PAGES.includes(h))go(h);
+});
+
+function checkHash(){
+  const h=location.hash;
+  if(h.startsWith('#pitch/')){
+    const c=h.split('/')[1];
+    if(c&&c.toUpperCase()===CODE){go('pitch');unlockDeck();return;}
+  }
+  const p=h.replace('#','');
+  if(PAGES.includes(p))go(p);
+  else{setNav('home');}
+}
+
+/* ── MOBILE NAV ── */
+function toggleMob(){
+  document.getElementById('mobMenu').classList.toggle('open');
+  document.getElementById('hbg').classList.toggle('open');
+}
+function closeMob(){
+  document.getElementById('mobMenu').classList.remove('open');
+  document.getElementById('hbg').classList.remove('open');
+}
+
+/* ── FOOTER INJECTION ── */
+function injectFooters(){
+  const tpl=document.getElementById('ftTpl').content;
+  ['ft-home','ft-about','ft-pitch','ft-contact'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&!el.hasChildNodes())el.appendChild(tpl.cloneNode(true));
+  });
+}
+
+/* ── PITCH ── */
+let curSl=0;
+const TOT=10;
+
+function buildDots(){
+  const c=document.getElementById('slDots');
+  c.innerHTML='';
+  for(let i=0;i<TOT;i++){
+    const d=document.createElement('div');
+    d.className='sdot'+(i===0?' on':'');
+    d.onclick=()=>goSl(i);
+    c.appendChild(d);
+  }
+}
+function goSl(n){
+  document.getElementById('sl'+(curSl+1)).classList.remove('on');
+  curSl=(n+TOT)%TOT;
+  document.getElementById('sl'+(curSl+1)).classList.add('on');
+  document.querySelectorAll('.sdot').forEach((d,i)=>d.classList.toggle('on',i===curSl));
+}
+function nextSl(){goSl(curSl+1)}
+function prevSl(){goSl(curSl-1)}
+document.addEventListener('keydown',e=>{
+  if(curPage==='pitch'){
+    if(e.key==='ArrowRight')nextSl();
+    if(e.key==='ArrowLeft')prevSl();
+  }
+});
+function checkCode(){
+  const v=document.getElementById('gateInput').value.trim().toUpperCase();
+  if(v===CODE){unlockDeck();}
+  else{document.getElementById('gateErr').style.display='block';}
+}
+function unlockDeck(){
+  document.getElementById('pitchGate').style.display='none';
+  document.getElementById('pitchDeck').classList.add('show');
+  buildDots();
+}
+
+/* ── MODALS ── */
+function openWL(){document.getElementById('wlOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeWL(){document.getElementById('wlOverlay').classList.remove('open');document.body.style.overflow='';}
+function closeOK(){document.getElementById('okOverlay').classList.remove('open');document.body.style.overflow='';}
+
+function submitWL(e){
+  e.preventDefault();
+  const name=document.getElementById('wlName').value;
+  const email=document.getElementById('wlEmail').value;
+  const venue=document.getElementById('wlVenue').value;
+  window.location.href=`mailto:info@compliancedaddy.com?subject=Waitlist%3A%20${encodeURIComponent(name)}&body=Name%3A%20${encodeURIComponent(name)}%0AEmail%3A%20${encodeURIComponent(email)}%0AVenue%3A%20${encodeURIComponent(venue)}`;
+  closeWL();
+  e.target.reset();
+  setTimeout(()=>{document.getElementById('okOverlay').classList.add('open')},350);
+}
+
+function submitContact(e){
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  window.location.href=`mailto:info@compliancedaddy.com?subject=Contact%20from%20${encodeURIComponent(fd.get('name'))}&body=${encodeURIComponent(`Name: ${fd.get('name')}\nEmail: ${fd.get('email')}\nVenue: ${fd.get('venue_type')}\n\n${fd.get('message')}`)}`;
+  e.target.reset();
+}
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      en.target.style.opacity='1';
+      en.target.style.transform='translateY(0)';
+      obs.unobserve(en.target);
+    }
+  });
+},{threshold:.08});
+
+function revealAll(){
+  document.querySelectorAll('.fcard,.tl-item,.how-step,.s-row,.stat-block').forEach((el,i)=>{
+    if(el.style.opacity==='1')return;
+    el.style.opacity='0';
+    el.style.transform='translateY(20px)';
+    el.style.transition=`opacity .55s ${i*.04}s ease, transform .55s ${i*.04}s ease`;
+    obs.observe(el);
+  });
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  injectFooters();
+  checkHash();
+  revealAll();
+  setTimeout(revealAll,400);
+});
+</script>
+</body>
+</html>
