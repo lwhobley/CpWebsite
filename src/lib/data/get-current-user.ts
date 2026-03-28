@@ -9,12 +9,7 @@ export async function getCurrentUser() {
   if (supabase) {
     const {
       data: { user: authUser },
-      error: authError,
     } = await supabase.auth.getUser();
-
-    if (authError) {
-      return null;
-    }
 
     if (authUser?.email) {
       const { data: profile, error: profileError } = await supabase
