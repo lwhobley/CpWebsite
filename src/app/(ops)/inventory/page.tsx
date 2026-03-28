@@ -26,7 +26,7 @@ export default async function InventoryPage() {
 
         <Card>
           <div className="overflow-x-auto">
-            <table className="warm-table min-w-full text-left text-sm">
+            <table className="min-w-full text-left text-sm">
               <thead className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
                 <tr>
                   <th className="pb-3">Item</th>

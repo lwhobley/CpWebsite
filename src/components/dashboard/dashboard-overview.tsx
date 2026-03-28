@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ComplianceRing } from "@/components/charts/compliance-ring";
 import { VarianceBars } from "@/components/charts/variance-bars";
 import { Badge } from "@/components/ui/badge";
@@ -11,20 +11,27 @@ import { formatCurrency, formatNumber, getGreeting } from "@/lib/utils";
 
 function AnimatedValue({ value, prefix = "" }: { value: number; prefix?: string }) {
   const [display, setDisplay] = useState(0);
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
     const start = performance.now();
     const duration = 800;
-    let frame = 0;
 
     const tick = (time: number) => {
       const progress = Math.min((time - start) / duration, 1);
       setDisplay(Math.round(value * progress));
-      if (progress < 1) frame = requestAnimationFrame(tick);
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      }
     };
 
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    frameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    };
   }, [value]);
 
   return <span>{prefix}{formatNumber(display)}</span>;
@@ -67,7 +74,12 @@ export function DashboardOverview({ user }: { user: AppUser }) {
             </p>
             <h2 className="section-title mt-3 text-4xl">Operations at a glance</h2>
             <p className="mt-2 text-sm text-[var(--muted)]">
-              Friday, March 27, 2026 with live status connected to your operations streams.
+              {new Intl.DateTimeFormat("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }).format(new Date())} with live status connected to your operations streams.
             </p>
           </div>
           <div className="flex items-center gap-3 rounded-full border border-[var(--border)] bg-white px-4 py-3">
@@ -105,7 +117,7 @@ export function DashboardOverview({ user }: { user: AppUser }) {
               <Badge tone="success">Realtime</Badge>
             </div>
             <div className="mt-5 overflow-x-auto">
-              <table className="warm-table min-w-full text-left text-sm">
+              <table className="min-w-full text-left text-sm">
                 <thead className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
                   <tr>
                     <th className="pb-3">Checklist</th>

@@ -12,52 +12,80 @@ type SyncResult = {
 };
 
 async function syncToast(): Promise<SyncResult> {
+  const liveSyncEnabled = Deno.env.get("POS_SYNC_LIVE_ENABLED") === "true";
   const apiKey = Deno.env.get("TOAST_API_KEY");
   const restaurantGuid = Deno.env.get("TOAST_RESTAURANT_GUID");
-  if (!apiKey || !restaurantGuid) {
+  if (!liveSyncEnabled) {
     return {
-      covers: 214,
-      checkAvg: 47,
-      totalRevenue: 10058,
+      covers: 0,
+      checkAvg: 0,
+      totalRevenue: 0,
       itemSales: [],
       posSystem: "toast",
-      status: "partial",
-      errorMsg: "Toast env vars missing. Returned preview metrics.",
+      status: "error",
+      errorMsg: "Toast sync is disabled. Set POS_SYNC_LIVE_ENABLED=true after implementing live API calls.",
+    };
+  }
+
+  if (!apiKey || !restaurantGuid) {
+    return {
+      covers: 0,
+      checkAvg: 0,
+      totalRevenue: 0,
+      itemSales: [],
+      posSystem: "toast",
+      status: "error",
+      errorMsg: "Toast sync is enabled but required credentials are missing.",
     };
   }
 
   return {
-    covers: 214,
-    checkAvg: 47,
-    totalRevenue: 10058,
+    covers: 0,
+    checkAvg: 0,
+    totalRevenue: 0,
     itemSales: [],
     posSystem: "toast",
-    status: "success",
+    status: "error",
+    errorMsg: "Toast live sync is not implemented yet.",
   };
 }
 
 async function syncSquare(): Promise<SyncResult> {
+  const liveSyncEnabled = Deno.env.get("POS_SYNC_LIVE_ENABLED") === "true";
   const token = Deno.env.get("SQUARE_ACCESS_TOKEN");
   const locationId = Deno.env.get("SQUARE_LOCATION_ID");
-  if (!token || !locationId) {
+  if (!liveSyncEnabled) {
     return {
-      covers: 198,
-      checkAvg: 44,
-      totalRevenue: 8712,
+      covers: 0,
+      checkAvg: 0,
+      totalRevenue: 0,
       itemSales: [],
       posSystem: "square",
-      status: "partial",
-      errorMsg: "Square env vars missing. Returned preview metrics.",
+      status: "error",
+      errorMsg: "Square sync is disabled. Set POS_SYNC_LIVE_ENABLED=true after implementing live API calls.",
+    };
+  }
+
+  if (!token || !locationId) {
+    return {
+      covers: 0,
+      checkAvg: 0,
+      totalRevenue: 0,
+      itemSales: [],
+      posSystem: "square",
+      status: "error",
+      errorMsg: "Square sync is enabled but required credentials are missing.",
     };
   }
 
   return {
-    covers: 198,
-    checkAvg: 44,
-    totalRevenue: 8712,
+    covers: 0,
+    checkAvg: 0,
+    totalRevenue: 0,
     itemSales: [],
     posSystem: "square",
-    status: "success",
+    status: "error",
+    errorMsg: "Square live sync is not implemented yet.",
   };
 }
 
@@ -70,11 +98,11 @@ Deno.serve(async (request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const posSystem = (Deno.env.get("POS_SYSTEM") ?? "toast") as "toast" | "square";
-    const locationId = "7b8c104b-4f70-49aa-ae2f-e7f451e7f44b";
+    const locationId = Deno.env.get("LOCATION_ID");
 
-    if (!supabaseUrl || !serviceRole) {
+    if (!supabaseUrl || !serviceRole || !locationId) {
       return Response.json(
-        { error: "Missing Supabase service credentials for POS sync." },
+        { error: "Missing Supabase service credentials or LOCATION_ID for POS sync." },
         { status: 500, headers: corsHeaders },
       );
     }

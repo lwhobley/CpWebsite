@@ -9,14 +9,23 @@ export async function getCurrentUser() {
   if (supabase) {
     const {
       data: { user: authUser },
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (authUser) {
-      const { data: profile } = await supabase
+    if (authError) {
+      return null;
+    }
+
+    if (authUser?.email) {
+      const { data: profile, error: profileError } = await supabase
         .from("users")
         .select("id, name, role, location_id, email, active")
         .eq("email", authUser.email)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        return null;
+      }
 
       if (profile) {
         return {
@@ -28,6 +37,8 @@ export async function getCurrentUser() {
           active: profile.active,
         };
       }
+
+      return null;
     }
   }
 

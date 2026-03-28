@@ -13,9 +13,12 @@ type SessionPayload = {
 };
 
 function getSecret() {
-  return new TextEncoder().encode(
-    process.env.AUTH_SECRET ?? "enish-dev-secret-change-me",
-  );
+  const authSecret = process.env.AUTH_SECRET;
+  if (!authSecret) {
+    throw new Error("AUTH_SECRET is required.");
+  }
+
+  return new TextEncoder().encode(authSecret);
 }
 
 export async function createSession(user: AppUser) {

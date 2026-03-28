@@ -5,12 +5,45 @@ type GeminiRequest = {
   mode: "vision" | "chat";
   prompt: string;
   image_base64?: string;
+  image_mime_type?: string;
   history?: Array<{ role: string; content: string }>;
   session_id?: string;
 };
 
+type VisionResult = {
+  result: "pass" | "flag" | "fail";
+  reasoning: string;
+  corrective_action: string;
+};
+
 const SYSTEM_PROMPT =
   "You are Enish Ops Hub Assistant. Ground every answer in Texas food safety law, TABC regulations, ADA accessibility requirements, and Houston health code. Answer in English unless asked for Spanish.";
+
+function parseVisionResult(text: string): VisionResult {
+  try {
+    const parsed = JSON.parse(text) as Partial<VisionResult>;
+    if (
+      (parsed.result === "pass" || parsed.result === "flag" || parsed.result === "fail") &&
+      typeof parsed.reasoning === "string" &&
+      typeof parsed.corrective_action === "string"
+    ) {
+      return {
+        result: parsed.result,
+        reasoning: parsed.reasoning,
+        corrective_action: parsed.corrective_action,
+      };
+    }
+  } catch {
+    // Fall through to a safe manual-review classification.
+  }
+
+  return {
+    result: "flag",
+    reasoning: text,
+    corrective_action:
+      "Review the model output manually and re-run the audit once the response format is corrected.",
+  };
+}
 
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") {
@@ -33,10 +66,15 @@ Deno.serve(async (request) => {
     const parts =
       payload.mode === "vision" && payload.image_base64
         ? [
-            { text: `${SYSTEM_PROMPT}\n\n${payload.prompt}` },
+            {
+              text:
+                `${SYSTEM_PROMPT}\n\n${payload.prompt}\n\n` +
+                'Return strict JSON with keys "result", "reasoning", and "corrective_action". ' +
+                'The "result" value must be exactly one of "pass", "flag", or "fail".',
+            },
             {
               inline_data: {
-                mime_type: "image/jpeg",
+                mime_type: payload.image_mime_type ?? "image/jpeg",
                 data: payload.image_base64,
               },
             },
@@ -82,17 +120,9 @@ Deno.serve(async (request) => {
     }
 
     if (payload.mode === "vision") {
+      const visionResult = parseVisionResult(text);
       return Response.json(
-        {
-          result: text.toLowerCase().includes("fail")
-            ? "fail"
-            : text.toLowerCase().includes("flag")
-              ? "flag"
-              : "pass",
-          reasoning: text,
-          corrective_action:
-            "Review highlighted compliance issue, assign corrective owner, and re-audit before service.",
-        },
+        visionResult,
         { headers: corsHeaders },
       );
     }

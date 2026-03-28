@@ -19,9 +19,9 @@ export function formatNumber(value: number) {
 
 export function getGreeting(date = new Date()) {
   const hour = date.getHours();
-  if (hour < 12) return "morning";
-  if (hour < 18) return "afternoon";
-  return "evening";
+  if (hour < 12) return "Morning";
+  if (hour < 18) return "Afternoon";
+  return "Evening";
 }
 
 export function initials(name: string) {

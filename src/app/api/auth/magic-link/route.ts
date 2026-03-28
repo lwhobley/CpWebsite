@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSession } from "@/lib/auth/session";
-import { APP_URL, LOCATION_ID } from "@/lib/constants";
-import { mockUsers } from "@/lib/data/mock";
+import { APP_URL } from "@/lib/constants";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
@@ -12,34 +10,23 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createServerSupabaseClient();
-  if (supabase) {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${APP_URL}/api/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    return NextResponse.json({ ok: true, message: "Magic link sent." });
+  if (!supabase) {
+    return NextResponse.json(
+      { error: "Magic-link sign-in is unavailable because Supabase is not configured." },
+      { status: 503 },
+    );
   }
 
-  const user = mockUsers.find((item) => item.role === "manager");
-  await createSession({
-    id: user?.id ?? "manager-preview",
-    name: user?.name ?? "Preview Manager",
-    role: user?.role ?? "manager",
-    locationId: user?.locationId ?? LOCATION_ID,
+  const { error } = await supabase.auth.signInWithOtp({
     email,
-    active: true,
+    options: {
+      emailRedirectTo: `${APP_URL}/api/auth/callback`,
+    },
   });
 
-  return NextResponse.json({
-    ok: true,
-    redirectTo: "/dashboard",
-    message: "Supabase env vars are missing, so a local manager session was created for preview.",
-  });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  return NextResponse.json({ ok: true, message: "Magic link sent." });
 }

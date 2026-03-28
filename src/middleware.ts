@@ -15,9 +15,7 @@ const protectedRoutes = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const needsAuth = protectedRoutes.some((route) => pathname.startsWith(route));
-  const hasSession =
-    request.cookies.has("enish_ops_session") ||
-    request.cookies.getAll().some((cookie) => cookie.name.startsWith("sb-"));
+  const hasSession = request.cookies.has("enish_ops_session");
 
   if (needsAuth && !hasSession) {
     return NextResponse.redirect(new URL("/login", request.url));
